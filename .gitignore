@@ -10,3 +10,6 @@ lib/
 key.json
 
 .env
+yarn.lock
+
+*.log*
