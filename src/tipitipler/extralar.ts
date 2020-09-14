@@ -15,4 +15,6 @@ type QueryStringObj = {
   query: optStr;
   mustBeData: string;
 };
+
+
 export { PayloadOfEMail, JsonIterator, QueryStringObj, optStr };

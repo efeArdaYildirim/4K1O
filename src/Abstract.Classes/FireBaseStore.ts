@@ -1,22 +1,11 @@
 // import { DB } from "../ikiyuzluler/DB";
-import { Query } from "../tipitipler/extralar";
 import { DAL } from "../Classes/DAL";
 import { firestore } from "firebase-admin";
 import * as functions from "firebase-functions";
+import { FilterFuncParams, WriteAData } from "../tipitipler/FireBaseStoreTypes";
+import { DB } from "../implements/DB";
 
-type FilterFuncParams = {
-  table: string;
-  queryArr: Query[];
-  returnDBQuery: boolean;
-};
-
-type WriteAData = {
-  table: string;
-  data: JSON | any[];
-  id?: string;
-};
-
-abstract class FireBaseStore /*implements DB*/ {
+abstract class FireBaseStore implements DB {
   db!: FirebaseFirestore.Firestore;
   connection!: DAL;
   constructor(connection: firestore.Firestore) {
@@ -75,7 +64,7 @@ abstract class FireBaseStore /*implements DB*/ {
   /**
    * komplex queriler kurmani saglar
    * @param {string} table
-   * @param {Query[]} queryArr
+   * @param {QueryStringObj[]} queryArr
    */
   async filter({
     table,
@@ -83,7 +72,9 @@ abstract class FireBaseStore /*implements DB*/ {
     returnDBQuery,
   }: FilterFuncParams): Promise<any> {
     const result = this.db.collection(table);
-    queryArr.forEach((query) => result.where(query.coll, query.q, query.data));
+    queryArr.forEach((query) =>
+      result.where(query.collOfTable, query.query, query.mustBeData)
+    );
     const { data, exists } = await this.DBDataParse(result, returnDBQuery);
     if (exists) return data;
     throw new Error("no data");
