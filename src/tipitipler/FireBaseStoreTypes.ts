@@ -12,4 +12,9 @@ type WriteAData = {
   id?: string;
 };
 
-export { FilterFuncParams, WriteAData };
+type DBDataParseReturnType = {
+  data: any | JSON;
+  exists: boolean;
+};
+
+export { FilterFuncParams, WriteAData, DBDataParseReturnType };

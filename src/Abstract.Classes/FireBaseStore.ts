@@ -2,7 +2,11 @@
 import { DAL } from "../Classes/DAL";
 import { firestore } from "firebase-admin";
 import * as functions from "firebase-functions";
-import { FilterFuncParams, WriteAData } from "../tipitipler/FireBaseStoreTypes";
+import {
+  DBDataParseReturnType,
+  FilterFuncParams,
+  WriteAData,
+} from "../tipitipler/FireBaseStoreTypes";
 import { DB } from "../implements/DB";
 
 abstract class FireBaseStore implements DB {
@@ -24,7 +28,7 @@ abstract class FireBaseStore implements DB {
   async DBDataParse(
     dataOfDbResult: any,
     shouldIDo: boolean = true
-  ): Promise<any> {
+  ): Promise<DBDataParseReturnType> {
     try {
       if (!shouldIDo) return { data: dataOfDbResult, exists: true };
       const out: any[] = [];
@@ -70,7 +74,7 @@ abstract class FireBaseStore implements DB {
     table,
     queryArr,
     returnDBQuery = false,
-  }: FilterFuncParams): Promise<any> {
+  }: FilterFuncParams): Promise<JSON> {
     const result = this.db.collection(table);
     queryArr.forEach((query) =>
       result.where(query.collOfTable, query.query, query.mustBeData)
@@ -129,7 +133,11 @@ abstract class FireBaseStore implements DB {
    * @param {string} table
    * @param {string} id
    */
-  async updateById(table: string, id: string, data: any): Promise<any> {
+  async updateById(
+    table: string,
+    id: string,
+    data: any
+  ): Promise<DBDataParseReturnType> {
     try {
       let result = await this.getById(table, id, false);
       result = result as firestore.DocumentReference<firestore.DocumentData>;
