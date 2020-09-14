@@ -10,7 +10,7 @@ interface DB {
     dataOfDbResult: any,
     shouldIDo: boolean
   ): Promise<DBDataParseReturnType>;
-  filter({ table, queryArr, returnDBQuery }: FilterFuncParams): Promise<JSON>;
+  filter({ table, queryArr, returnDBQuery }: FilterFuncParams): Promise<JSON[]>;
   writeAData({ table, data, id }: WriteAData): Promise<Boolean>;
   delById(table: string, id: string): Promise<boolean | Error>;
   updateById(table: string, id: string, data: any): Promise<JSON>;

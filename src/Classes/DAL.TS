@@ -1,8 +1,8 @@
 import * as admin from "firebase-admin";
 import { FireBaseStore } from "../Abstract.Classes/FireBaseStore";
-import { QueryStringObj } from "../tipitipler/Extralar";
-import { DBDataParseReturnType } from "../tipitipler/FireBaseStoreTypes";
-import { Room } from "../tipitipler/Room";
+import { ListRoomsQueryParams, QueryStringObj } from "../tipitipler/Extralar";
+import { SortQuery } from "../tipitipler/FireBaseStoreTypes";
+import { Room, Rooms } from "../tipitipler/Room";
 import { User } from "../tipitipler/User";
 
 class DAL extends FireBaseStore {
@@ -21,7 +21,7 @@ class DAL extends FireBaseStore {
 
   //#region getUserById
   getUserById(id: string): Promise<User> {
-    return (this.getById(this.tables.users, id) as unknown) as Promise<User>;
+    return this.getById(this.tables.users, id) as Promise<User>;
   }
   //#endregion getUserById
 
@@ -45,12 +45,17 @@ class DAL extends FireBaseStore {
 
   //#region searchUserByNameAndPasswd
 
-  searchUserByNameAndPasswd(name: string, passwd: string): Promise<User> {
+  searchUserByEmailAndPasswd(email: string, passwd: string): Promise<User> {
     const queryArr: QueryStringObj[] = [
-      { collOfTable: "name", query: "==", mustBeData: name },
+      { collOfTable: "email", query: "==", mustBeData: email },
       { collOfTable: "passwd", query: "==", mustBeData: passwd },
     ];
-    return this.filter({ table: this.tables.users, queryArr }) as Promise<User>;
+    return this.filter({
+      table: this.tables.users,
+      queryArr,
+    })
+      .then((res: any[]) => res[0] as User)
+      .catch((err) => err);
   }
 
   //#endregion searchUserByNameAndPasswd
@@ -115,6 +120,46 @@ class DAL extends FireBaseStore {
   upDateRoomById() {}
 
   //#endregion upDateRoomById
+
+  //#region listRoomByRankORCity
+
+  listRoomByRankORCity({ queryArr, index, sort, limit }: ListRoomsQueryParams) {
+    const sortArray: SortQuery[] = [
+      { orderBy: "rank", sortBy: "desc" },
+      ...sort,
+    ];
+    return this.filter({
+      table: this.tables.rooms,
+      queryArr,
+      limit,
+      index,
+      sort: sortArray,
+    });
+  }
+
+  //#endregion listRoomByRankORCity
+
+  //#region getMyRooms
+
+  getMyRooms(id: string): Promise<Rooms> {
+    const query: QueryStringObj[] = [
+      { collOfTable: "owner", query: "==", mustBeData: id },
+    ];
+    return this.filter({
+      table: this.tables.rooms,
+      queryArr: query,
+    }) as Promise<Rooms>;
+  }
+
+  //#endregion getMyRooms
+
+  //#region updateRankById
+
+  updateRankById(id: string, rank: string): Promise<Room> {
+    return this.updateById(this.tables.rooms, id, { rank }) as Promise<Room>;
+  }
+
+  //#endregion updateRankById
 
   //#endregion RoomFunctions
 }

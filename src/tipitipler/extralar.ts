@@ -1,3 +1,5 @@
+import { SortQuery } from "./FireBaseStoreTypes";
+
 type PayloadOfEMail = {
   subject: string;
   text: string;
@@ -16,5 +18,17 @@ type QueryStringObj = {
   mustBeData: string;
 };
 
+type ListRoomsQueryParams = {
+  queryArr: QueryStringObj[];
+  index: number;
+  sort: SortQuery[];
+  limit: number;
+};
 
-export { PayloadOfEMail, JsonIterator, QueryStringObj, optStr };
+export {
+  PayloadOfEMail,
+  JsonIterator,
+  QueryStringObj,
+  optStr,
+  ListRoomsQueryParams,
+};

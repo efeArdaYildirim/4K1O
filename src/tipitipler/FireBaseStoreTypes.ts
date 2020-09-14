@@ -1,9 +1,14 @@
 import { QueryStringObj } from "./Extralar";
 
+type SortQuery = { orderBy: string; sortBy: "asc" | "desc" };
+
 type FilterFuncParams = {
   table: string;
   queryArr: QueryStringObj[];
   returnDBQuery?: boolean;
+  limit?: number;
+  index?: number;
+  sort?: SortQuery[];
 };
 
 type WriteAData = {
@@ -13,8 +18,8 @@ type WriteAData = {
 };
 
 type DBDataParseReturnType = {
-  data: any | JSON;
+  data: any | JSON | JSON[];
   exists: boolean;
 };
 
-export { FilterFuncParams, WriteAData, DBDataParseReturnType };
+export { FilterFuncParams, WriteAData, DBDataParseReturnType, SortQuery };

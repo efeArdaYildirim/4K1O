@@ -59,8 +59,8 @@ abstract class FireBaseStore implements DB {
   > {
     const result = this.db.collection(table).doc(id);
     const { data, exists } = await this.DBDataParse(result, returnDBQuery);
-    if (exists) return data;
-    throw new Error("veri yok");
+    if (exists) return data[0];
+    throw new Error("no data");
   }
   //#endregion getById
 
@@ -74,11 +74,23 @@ abstract class FireBaseStore implements DB {
     table,
     queryArr,
     returnDBQuery = false,
-  }: FilterFuncParams): Promise<JSON> {
+    limit,
+    index = 0,
+    sort,
+  }: FilterFuncParams): Promise<JSON[]> {
     const result = this.db.collection(table);
     queryArr.forEach((query) =>
       result.where(query.collOfTable, query.query, query.mustBeData)
     );
+    if (limit) {
+      result.startAt(index * limit);
+      result.limit(limit);
+    }
+    if (sort) {
+      sort.forEach((order) => {
+        result.orderBy(order.orderBy, order.sortBy || "desc");
+      });
+    }
     const { data, exists } = await this.DBDataParse(result, returnDBQuery);
     if (exists) return data;
     throw new Error("no data");
@@ -103,7 +115,7 @@ abstract class FireBaseStore implements DB {
     }
   }
 
-  //#endregion iteAData
+  //#endregion wiriteAData
 
   //#region delById
   /**
@@ -139,7 +151,7 @@ abstract class FireBaseStore implements DB {
       const { data: parsedData } = await this.DBDataParse(
         await result.update(data)
       );
-      return parsedData;
+      return parsedData[0];
     } catch (err) {
       functions.logger.error("updteById", { err, arguments });
       throw err;
