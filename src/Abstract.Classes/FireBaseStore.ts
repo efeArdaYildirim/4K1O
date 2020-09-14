@@ -1,4 +1,3 @@
-// import { DB } from "../ikiyuzluler/DB";
 import { DAL } from "../Classes/DAL";
 import { firestore } from "firebase-admin";
 import * as functions from "firebase-functions";

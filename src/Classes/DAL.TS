@@ -117,7 +117,9 @@ class DAL extends FireBaseStore {
 
   //#region upDateRoomById
 
-  upDateRoomById() {}
+  upDateRoomById(id: string, data: JSON) {
+    return this.updateById(this.tables.rooms, id, data);
+  }
 
   //#endregion upDateRoomById
 
