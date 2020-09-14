@@ -1,4 +1,4 @@
-import { Emlak } from "./Emlak";
+import { LangAgent } from "./LangAgent";
 
 type User = {
   name: string;
@@ -6,9 +6,9 @@ type User = {
   photo?: string;
   password: string;
   rank?: number;
-  isEmlakci: boolean;
+  isLangAgent: boolean;
   BirdthDay: string;
-  emlak?: Emlak;
+  langAgent?: LangAgent;
   disabled: boolean;
 };
 

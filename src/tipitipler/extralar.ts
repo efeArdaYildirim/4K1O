@@ -1,18 +1,18 @@
-type Payload = {
+type PayloadOfEMail = {
   subject: string;
   text: string;
   html: string;
 };
 
-type JsonIter<T> = {
+type JsonIterator<T> = {
   [i in keyof T]: T[i];
 };
 
 type optStr = "<" | "<=" | "==" | ">" | ">=";
 
-type Query = {
-  coll: string;
-  q: optStr;
-  data: string;
+type QueryStringObj = {
+  collOfTable: string;
+  query: optStr;
+  mustBeData: string;
 };
-export { Payload, JsonIter, Query, optStr };
+export { PayloadOfEMail, JsonIterator, QueryStringObj, optStr };

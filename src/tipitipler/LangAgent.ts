@@ -1,8 +1,8 @@
-type Emlak = {
-  tc: string;
+type LangAgent = {
+  turkisIdNumber: string;
   firstName: string;
   lastName: string;
   phoneNumber: string;
 };
 
-export { Emlak };
+export { LangAgent };
