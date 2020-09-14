@@ -1,4 +1,3 @@
-import { DAL } from "../Classes/DAL";
 import { firestore } from "firebase-admin";
 import * as functions from "firebase-functions";
 import {
@@ -10,9 +9,8 @@ import { DB } from "../implements/DB";
 
 abstract class FireBaseStore implements DB {
   db!: FirebaseFirestore.Firestore;
-  connection!: DAL;
-  constructor(connection: firestore.Firestore) {
-    this.db = connection;
+  constructor() {
+    this.db = firestore();
   }
 
   //#region DBDataParse
