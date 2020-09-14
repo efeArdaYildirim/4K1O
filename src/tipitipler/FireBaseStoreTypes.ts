@@ -3,7 +3,7 @@ import { QueryStringObj } from "./Extralar";
 type FilterFuncParams = {
   table: string;
   queryArr: QueryStringObj[];
-  returnDBQuery: boolean;
+  returnDBQuery?: boolean;
 };
 
 type WriteAData = {

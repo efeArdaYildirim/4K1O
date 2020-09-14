@@ -69,7 +69,7 @@ abstract class FireBaseStore implements DB {
   async filter({
     table,
     queryArr,
-    returnDBQuery,
+    returnDBQuery = false,
   }: FilterFuncParams): Promise<any> {
     const result = this.db.collection(table);
     queryArr.forEach((query) =>
@@ -129,7 +129,7 @@ abstract class FireBaseStore implements DB {
    * @param {string} table
    * @param {string} id
    */
-  async updateById(table: string, id: string, data: JSON): Promise<any> {
+  async updateById(table: string, id: string, data: any): Promise<any> {
     try {
       let result = await this.getById(table, id, false);
       result = result as firestore.DocumentReference<firestore.DocumentData>;

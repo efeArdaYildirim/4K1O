@@ -6,7 +6,7 @@ interface DB {
   filter({ table, queryArr, returnDBQuery }: FilterFuncParams): Promise<any>;
   writeAData({ table, data, id }: WriteAData): Promise<Boolean>;
   delById(table: string, id: string): Promise<boolean | Error>;
-  updateById(table: string, id: string, data: JSON): Promise<any>;
+  updateById(table: string, id: string, data: any): Promise<any>;
   getById(
     table: string,
     id: string,

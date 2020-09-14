@@ -1,4 +1,6 @@
+import * as admin from "firebase-admin";
 import { FireBaseStore } from "../Abstract.Classes/FireBaseStore";
+import { QueryStringObj } from "../tipitipler/Extralar";
 
 class DAL extends FireBaseStore {
   tables: any;
@@ -36,6 +38,34 @@ class DAL extends FireBaseStore {
     return await this.updateById(this.tables.users, id, data);
   }
   //#endregion updateUserById
+
+  //#region searchUserByNameAndPasswd
+
+  async searchUserByNameAndPasswd(name: string, passwd: string) {
+    const queryArr: QueryStringObj[] = [
+      { collOfTable: "name", query: "==", mustBeData: name },
+      { collOfTable: "passwd", query: "==", mustBeData: passwd },
+    ];
+    return await this.filter({ table: this.tables.users, queryArr });
+  }
+
+  //#endregion searchUserByNameAndPasswd
+
+  //#region addRoomToCard
+  async addRoomToCard(userId: string, roomId: string) {
+    return await this.updateById(this.tables.users, userId, {
+      cards: admin.firestore.FieldValue.arrayUnion(roomId),
+    });
+  }
+  //#endregion addRoomToCard
+
+  //#region delRoomToCard
+  async delRoomToCard(userId: string, roomId: string) {
+    return await this.updateById(this.tables.users, userId, {
+      cards: admin.firestore.FieldValue.arrayRemove(roomId),
+    });
+  }
+  //#endregion delRoomToCard
 
   //#endregion userFuncions
 }

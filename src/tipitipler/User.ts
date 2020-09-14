@@ -7,7 +7,7 @@ type User = {
   password: string;
   rank?: number;
   isLangAgent: boolean;
-  BirdthDay: string;
+  birdthDay: string;
   langAgent?: LangAgent;
   disabled: boolean;
 };
