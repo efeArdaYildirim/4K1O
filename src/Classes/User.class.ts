@@ -21,4 +21,12 @@ export class UserClass {
       .catch((err) => err);
   }
   //#endregion getMe
+
+  //#region delMe
+
+  delMe(): Promise<boolean | Error> {
+    return this.db.delUserById(this.uid);
+  }
+
+  //#endregion delMe
 }
