@@ -6,7 +6,7 @@ import {
   createTransport,
   getTestMessageUrl,
 } from "nodemailer";
-const { active, connection } = require("../smtpConfig.json");
+const { active, connection } = require("../../smtpConfig.json");
 import { PayloadOfEMail } from "../tipitipler/extralar";
 config();
 export class App {
@@ -32,7 +32,7 @@ export class App {
     return;
   }
 
-  async rankCalcByLikefromRoom(roomId: string, isLke: boolean): Promise<void> {
+  async rankCalcByLikefromRoom(roomId: string): Promise<void> {
     try {
       const { like, dislike } = await this.db.getRoomById(roomId);
       const rank: number = like - dislike;
@@ -47,7 +47,7 @@ export class App {
     }
   }
 
-  async sendMailToReviver(data: PayloadOfEMail) {
+  async sendMailToReciver(data: PayloadOfEMail) {
     const info = this.transporter.sendMail(data);
     functions.logger.info("sendMailToReviver", {
       arguments,
