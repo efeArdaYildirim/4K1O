@@ -124,8 +124,11 @@ abstract class FireBaseStore implements DB {
     try {
       const result = (await this.getById(
         table,
-        id
+        id,
+        false
       )) as firestore.DocumentReference<firestore.DocumentData>;
+      const { data } = await this.DBDataParse(result);
+      functions.logger.info("delById", { arguments, data });
       await result.delete();
       return true;
     } catch (err) {
@@ -145,6 +148,8 @@ abstract class FireBaseStore implements DB {
     try {
       let result = await this.getById(table, id, false);
       result = result as firestore.DocumentReference<firestore.DocumentData>;
+      const { data: dataForLog } = await this.DBDataParse(result);
+      functions.logger.info("updateById", { arguments, dataForLog });
       const { data: parsedData } = await this.DBDataParse(
         await result.update(data)
       );
