@@ -1,3 +1,4 @@
+import { Room } from "../tipitipler/Room";
 import { User } from "../tipitipler/User";
 import { DAL } from "./DAL";
 
@@ -50,4 +51,22 @@ export class UserClass {
       .catch((err) => err);
   }
   //#endregion updateMe
+
+  //#region roomAddToCart
+  roomAddToCart(roomId: string): Promise<Room> {
+    return this.db.addRoomToCard(this.uid, roomId);
+  }
+  //#endregion roomAddToCart
+
+  //#region roomDelToCart
+  roomDelToCart(roomId: string): Promise<Room> {
+    return this.db.delRoomToCard(this.uid, roomId);
+  }
+  //#endregion roomDelToCart
+
+  //#region rankRoom
+  rankRoom(roomId: string, like: boolean): Promise<Room> {
+    return this.db.addLikeOrDislikeRoomById(roomId, like);
+  }
+  //#endregion rankRoom
 }

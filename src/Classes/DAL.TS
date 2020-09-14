@@ -104,7 +104,7 @@ class DAL extends FireBaseStore {
   }
   //#endregion hideRoomById
 
-  //#region addLikeRoomById
+  //#region addLikeOrDislikeRoomById
   addLikeOrDislikeRoomById(id: string, like: boolean): Promise<Room> {
     let value: any;
     if (like) value = admin.firestore.FieldValue.increment(1);
@@ -113,7 +113,7 @@ class DAL extends FireBaseStore {
       Room
     >;
   }
-  //#endregion addLikeRoomById
+  //#endregion addLikeOrDislikeRoomById
 
   //#region upDateRoomById
 
