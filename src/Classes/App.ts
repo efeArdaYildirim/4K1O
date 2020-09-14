@@ -1,11 +1,37 @@
 import * as functions from "firebase-functions";
+import { config } from "dotenv";
 import { DAL } from "./DAL";
-
+import {
+  createTestAccount,
+  createTransport,
+  getTestMessageUrl,
+} from "nodemailer";
+const { active, connection } = require("../smtpConfig.json");
+import { PayloadOfEMail } from "../tipitipler/extralar";
+config();
 export class App {
   db: DAL;
+  transporter: any;
   constructor(dal: DAL) {
     this.db = dal;
+    this.transporter;
+    this.smtpConnection()
+      .then((res) => res)
+      .catch((err) => err);
   }
+
+  /**
+   * @private
+   */
+  async smtpConnection(): Promise<void> {
+    if (active) {
+      this.transporter = createTransport(connection);
+    } else {
+      this.transporter = await createTestAccount();
+    }
+    return;
+  }
+
   async rankCalcByLikefromRoom(roomId: string, isLke: boolean): Promise<void> {
     try {
       const { like, dislike } = await this.db.getRoomById(roomId);
@@ -19,5 +45,14 @@ export class App {
       functions.logger.error("ranking", { err, arguments });
       return;
     }
+  }
+
+  async sendMailToReviver(data: PayloadOfEMail) {
+    const info = this.transporter.sendMail(data);
+    functions.logger.info("sendMailToReviver", {
+      arguments,
+      mailUrl: getTestMessageUrl(info),
+    });
+    return info;
   }
 }
