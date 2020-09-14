@@ -1,6 +1,6 @@
 import { LangAgent } from "./LangAgent";
 
-type User = {
+type User = JSON & {
   name: string;
   email: string;
   photo?: string;

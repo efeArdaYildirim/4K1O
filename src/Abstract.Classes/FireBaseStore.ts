@@ -92,7 +92,7 @@ abstract class FireBaseStore implements DB {
    *
    * @param {WriteAData} // isimlendirilmis degisken alir
    */
-  async writeAData({ table, data, id }: WriteAData): Promise<Boolean> {
+  async writeAData({ table, data, id }: WriteAData): Promise<boolean> {
     try {
       if (id)
         return (await this.db.collection(table).doc(id).set(data)) && true;
@@ -115,8 +115,7 @@ abstract class FireBaseStore implements DB {
     try {
       const result = (await this.getById(
         table,
-        id,
-        false
+        id
       )) as firestore.DocumentReference<firestore.DocumentData>;
       await result.delete();
       return true;
@@ -133,15 +132,14 @@ abstract class FireBaseStore implements DB {
    * @param {string} table
    * @param {string} id
    */
-  async updateById(
-    table: string,
-    id: string,
-    data: any
-  ): Promise<DBDataParseReturnType> {
+  async updateById(table: string, id: string, data: any): Promise<JSON> {
     try {
       let result = await this.getById(table, id, false);
       result = result as firestore.DocumentReference<firestore.DocumentData>;
-      return this.DBDataParse(await result.update(data));
+      const { data: parsedData } = await this.DBDataParse(
+        await result.update(data)
+      );
+      return parsedData;
     } catch (err) {
       functions.logger.error("updteById", { err, arguments });
       throw err;

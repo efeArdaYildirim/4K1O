@@ -1,4 +1,4 @@
-type Room = {
+type Room = JSON & {
   id: number;
 
   title: string;

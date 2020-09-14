@@ -13,11 +13,7 @@ interface DB {
   filter({ table, queryArr, returnDBQuery }: FilterFuncParams): Promise<JSON>;
   writeAData({ table, data, id }: WriteAData): Promise<Boolean>;
   delById(table: string, id: string): Promise<boolean | Error>;
-  updateById(
-    table: string,
-    id: string,
-    data: any
-  ): Promise<DBDataParseReturnType>;
+  updateById(table: string, id: string, data: any): Promise<JSON>;
 
   getById(
     table: string,
