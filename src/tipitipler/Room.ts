@@ -28,7 +28,6 @@ type Room = {
       url: string;
       alt: number;
       lastChange: Date;
-      tel: string;
     }
   ];
 };
