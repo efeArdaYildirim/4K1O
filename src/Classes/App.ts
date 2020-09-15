@@ -55,4 +55,8 @@ export class App {
     });
     return info;
   }
+
+  turkisIdCheck(id: string) {
+    return true;
+  }
 }
