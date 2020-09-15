@@ -8,11 +8,16 @@ export class AnonimFirebase {
     this.db = dal;
   }
 
-  validate(data: any) {
-    new Validator(data)
+  validateBaisicUserData(data: any):Validator {
+    return new Validator(data)
       .maxLength("name", 64)
       .minLength("name", 2)
-      .maxWordCoud("name", 4).;
+      .maxWordCoud("name", 4)
+      .isEmail("email")
+      .minLength("password", 8)
+      .maxLength("password", 64)
+      .isBoolean("isLandAgent")
+      .isNumber("birdthDay");
   }
 
   async addUser(user: User): Promise<boolean> {
