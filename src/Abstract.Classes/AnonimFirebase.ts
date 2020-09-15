@@ -41,11 +41,10 @@ export class AnonimFirebase {
     else throw new Error("eksik veri");
     const createdUser: admin.auth.UserRecord = await admin.auth().createUser({
       email: user.email,
-      phoneNumber:
-        (user.isLandAgent && user.landAgent?.phoneNumber) || undefined,
+      phoneNumber: user.landAgent.phoneNumber,
       password: user.password,
       displayName: user.name,
-      disabled: user.disabled || false,
+      disabled: true,
     });
 
     return this.db.creatUser({ data: user, id: createdUser.uid });
