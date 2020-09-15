@@ -133,7 +133,15 @@ class DAL extends FireBaseStore {
 
   //#region listRoomByRankORCity
 
-  listRoomByRankORCity({ queryArr, index, sort, limit }: ListRoomsQueryParams) {
+  listRoomByRankORCity({
+    queryArr,
+    index,
+    sort,
+    limit,
+    city,
+  }: ListRoomsQueryParams) {
+    if (city)
+      queryArr.push({ collOfTable: "city", query: "==", mustBeData: city });
     const sortArray: SortQuery[] = [
       { orderBy: "rank", sortBy: "desc" },
       ...sort,
@@ -144,7 +152,7 @@ class DAL extends FireBaseStore {
       limit,
       index,
       sort: sortArray,
-    });
+    }) as Promise<Rooms>;
   }
 
   //#endregion listRoomByRankORCity

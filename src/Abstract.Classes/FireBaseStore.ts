@@ -74,7 +74,7 @@ abstract class FireBaseStore implements DB {
     limit,
     index = 0,
     sort,
-  }: FilterFuncParams): Promise<JSON[]> {
+  }: FilterFuncParams): Promise<Object[]> {
     const result = this.db.collection(table);
     queryArr.forEach((query) =>
       result.where(query.collOfTable, query.query, query.mustBeData)
@@ -144,7 +144,11 @@ abstract class FireBaseStore implements DB {
    * @param {string} table
    * @param {string} id
    */
-  async updateById(table: string, id: string, data: any): Promise<Object|Error> {
+  async updateById(
+    table: string,
+    id: string,
+    data: any
+  ): Promise<Object | Error> {
     try {
       let result = await this.getById(table, id, false);
       result = result as firestore.DocumentReference<firestore.DocumentData>;

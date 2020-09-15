@@ -23,6 +23,7 @@ type ListRoomsQueryParams = {
   index: number;
   sort: SortQuery[];
   limit: number;
+  city?: string;
 };
 
 export {
