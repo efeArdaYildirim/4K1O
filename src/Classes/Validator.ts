@@ -1,7 +1,13 @@
 export class Validator {
-  data: any;
+  private data: any;
+  private propName: any;
   constructor(data: any) {
     this.data = data;
+    this.propName = Object.getOwnPropertyNames(data);
+  }
+
+  public get getVal() {
+    return this.data;
   }
 
   maxLength(obj: string, len: number) {
@@ -44,10 +50,53 @@ export class Validator {
     return this;
   }
   isBoolean(obj: string) {
-    if (typeof this.data[obj] !== "boolean") throw new Error("veri bool degil");
+    const nowData = this.data[obj];
+    if (typeof nowData !== "boolean") throw new Error("veri bool degil");
+    if (
+      typeof nowData !== "string" &&
+      (nowData.toString() === "true" || nowData.toString() === "false")
+    )
+      throw new Error("veri bool degil");
+
     return this;
   }
-  itIsshouldNotToBeThere() {}
-  itIsshouldToBeThere() {}
-  removeAnotherData() {}
+  itIsshouldNotToBeThere(objs: string[]) {
+    const more: string[] = [];
+    objs.forEach((obj) => {
+      if (this.propName.includes(obj)) more.push(obj);
+    });
+    if (more.length > 1)
+      throw new Error(
+        JSON.stringify({
+          msg: "bunlar fazla",
+          more,
+          objs,
+          propName: this.propName,
+        })
+      );
+    return this;
+  }
+  itIsshouldToBeThere(objs: string[]) {
+    const more: string[] = [];
+    objs.forEach((obj) => {
+      if (!this.propName.includes(obj)) more.push(obj);
+    });
+    if (more.length > 1)
+      throw new Error(
+        JSON.stringify({
+          msg: "bunlar eksik",
+          more,
+          objs,
+          propName: this.propName,
+        })
+      );
+    return this;
+  }
+  removeAnotherData(objs: string[]) {
+    const result: any = {};
+    objs.forEach((obj: string) => {
+      result[obj] = this.data[obj];
+    });
+    this.data = result;
+  }
 }
