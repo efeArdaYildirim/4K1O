@@ -1,6 +1,6 @@
 import { QueryStringObj } from "../tipitipler/Extralar";
 import { SortQuery } from "../tipitipler/FireBaseStoreTypes";
-import { Rooms } from "../tipitipler/Room";
+import { Room, Rooms } from "../tipitipler/Room";
 import { User } from "../tipitipler/User";
 import { DAL } from "./DAL";
 import { Validator } from "./Validator";
@@ -18,7 +18,14 @@ export class Anonim {
     index: number = 0,
     limit: number = 50
   ): Promise<Rooms> {
-    return this.db.listRoomByRankORCity({ queryArr, sort, limit, index, city });
+    return this.db
+      .listRoomByRankORCity({ queryArr, sort, limit, index, city })
+      .then((rooms: Rooms) => {
+        return rooms.map(async (room: Room | any) => {
+          room.ownerData = await this.getUser(room.owner);
+        });
+      })
+      .catch((err) => err);
   }
 
   getUser(id: string) {
