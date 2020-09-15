@@ -100,4 +100,10 @@ export class Validator {
     this.data = result;
     return this;
   }
+
+  isEmail(obj: string) {
+    const regex: RegExp = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
+    if (!regex.test(this.data[obj])) throw new Error("bu email degil");
+    return this;
+  }
 }
