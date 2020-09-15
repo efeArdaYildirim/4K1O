@@ -56,7 +56,7 @@ export class App {
     return info;
   }
 
-  turkisIdCheck(id: string) {
-    return true;
+  static turkisIdCheck(id: any): void {
+    return;
   }
 }
