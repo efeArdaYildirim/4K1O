@@ -33,7 +33,7 @@ export class Anonim {
       const data = new Validator(user).removeAnotherData([
         "password",
         "isLandAgent",
-        "birdthDay",
+        "yearOfBirdth",
         "landAgent",
       ]).getVal;
       const landAgetnData = new Validator(data.landAgent).removeAnotherData([

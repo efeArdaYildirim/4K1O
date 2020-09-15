@@ -7,7 +7,7 @@ type User = JSON & {
   password: string;
   rank?: number;
   isLandAgent: boolean;
-  birdthDay: string;
+  yearOfBirdth: string;
   landAgent?: LandAgentT;
   disabled: boolean;
 };

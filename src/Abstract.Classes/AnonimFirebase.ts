@@ -11,6 +11,14 @@ export class AnonimFirebase {
 
   validateBaisicUserData(data: any): Validator {
     return new Validator(data)
+      .itIsshouldToBeThere([
+        "landAgent",
+        "isLandAgent",
+        "name",
+        "email",
+        "password",
+        "yearOfBirdth",
+      ])
       .maxLength("name", 64)
       .minLength("name", 2)
       .maxWordCoud("name", 4)
@@ -18,7 +26,7 @@ export class AnonimFirebase {
       .minLength("password", 8)
       .maxLength("password", 64)
       .isBoolean("isLandAgent")
-      .isNumber("birdthDay");
+      .isNumber("yearOfBirdth");
   }
 
   async addSatan(user: User): Promise<boolean> {
@@ -28,7 +36,7 @@ export class AnonimFirebase {
       "firstName",
       "lastName",
       "phoneNumber",
-    ]); 
+    ]);
     if (user.landAgent) App.turkisIdCheck(user.landAgent);
     else throw new Error("eksik veri");
     const createdUser: admin.auth.UserRecord = await admin.auth().createUser({
