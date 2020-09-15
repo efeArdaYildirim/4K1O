@@ -1,32 +1,31 @@
-<<<<<<< HEAD
 import { Room, Rooms } from "../tipitipler/Room";
-=======
-import { Room } from "../tipitipler/Room";
->>>>>>> ValidatorClass
 import { DAL } from "./DAL";
 import { UserClass } from "./User";
+import { Validator } from "./Validator";
 
 export class LandAgent extends UserClass {
   db: DAL;
   uid: string;
-<<<<<<< HEAD
   constructor(dal: DAL, uid: string) {
-=======
-  constructor(uid: string, dal: DAL) {
->>>>>>> ValidatorClass
     super(uid, dal);
     this.db = dal;
     this.uid = uid;
   }
 
-  private roomDataValidator(room: Room): boolean {
-    try {
-      // new Validator()
-    } catch (err) {}
-    return true;
+  private roomDataValidator(room: Room): void {
+    new Validator(room).itIsshouldNotToBeThere([
+      "rank",
+      "look",
+      "like",
+      "dislike",
+      "id",
+    ]);
   }
 
-  addRoom(room: Room) {}
+  addRoom(room: Room) {
+    this.roomDataValidator(room);
+    return this.db.createRoom(room);
+  }
 
   getMyRooms(): Promise<Rooms> {
     return this.db.getMyRooms(this.uid);
@@ -36,5 +35,9 @@ export class LandAgent extends UserClass {
     return this.db.delRoomById(roomId);
   }
 
-  updateMyRoom(roomId: string, updateRoomData: Room): Promise<Room> {}
+  updateMyRoom(roomId: string, updateRoomData: Room): Promise<Room> {
+    this.roomDataValidator(updateRoomData);
+    new Validator(updateRoomData).itIsshouldNotToBeThere(["owner"]);
+    return this.db.upDateRoomById(roomId, updateRoomData);
+  }
 }
