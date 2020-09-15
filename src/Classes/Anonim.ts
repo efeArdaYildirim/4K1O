@@ -1,7 +1,9 @@
 import { QueryStringObj } from "../tipitipler/Extralar";
 import { SortQuery } from "../tipitipler/FireBaseStoreTypes";
 import { Rooms } from "../tipitipler/Room";
+import { User } from "../tipitipler/User";
 import { DAL } from "./DAL";
+import { Validator } from "./Validator";
 
 export class Anonim {
   db: DAL;
@@ -17,5 +19,23 @@ export class Anonim {
     limit: number = 50
   ): Promise<Rooms> {
     return this.db.listRoomByRankORCity({ queryArr, sort, limit, index, city });
+  }
+
+  getUser(id: string) {
+    return this.db.getUserById(id).then((user: User) => {
+      const data = new Validator(user).removeAnotherData([
+        "password",
+        "isLandAgent",
+        "birdthDay",
+        "landAgent",
+      ]).getVal;
+      const landAgetnData = new Validator(data.landAgent).removeAnotherData([
+        "turkisIdNumber",
+      ]).getVal;
+      return {
+        data,
+        landAgetnData,
+      };
+    });
   }
 }

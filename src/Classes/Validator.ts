@@ -98,5 +98,6 @@ export class Validator {
       result[obj] = this.data[obj];
     });
     this.data = result;
+    return this;
   }
 }
