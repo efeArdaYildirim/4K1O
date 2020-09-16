@@ -9,7 +9,8 @@
     "strict": true,
     "target": "es2017",
     "watch": true,
-    "declaration": true
+    "declaration": true,
+    "forceConsistentCasingInFileNames": false,
   },
   "compileOnSave": true,
   "include": [

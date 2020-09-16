@@ -1,13 +1,13 @@
 import * as functions from "firebase-functions";
 import { config } from "dotenv";
 import { DAL } from "./DAL";
+import { PayloadOfEMail } from "../tipitipler/extralar";
 import {
   createTestAccount,
   createTransport,
   getTestMessageUrl,
 } from "nodemailer";
 const { active, connection } = require("../../smtpConfig.json");
-import { PayloadOfEMail } from "../tipitipler/extralar";
 config();
 export class App {
   db: DAL;
