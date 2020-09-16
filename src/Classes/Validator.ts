@@ -106,4 +106,12 @@ export class Validator {
     if (!regex.test(this.data[obj])) throw new Error("bu email degil");
     return this;
   }
+
+  minNumberValue(obj: string, val: number) {
+    if (this.data[obj] < val) throw new Error("veri cok kucuk");
+  }
+
+  maxNumberValue(obj: string, val: number) {
+    if (this.data[obj] > val) throw new Error("veri cok buyuk");
+  }
 }
