@@ -8,8 +8,8 @@ import { User } from "../tipitipler/User";
 class DAL extends FireBaseStore {
   tables: { users: string; cards: string; rooms: string };
 
-  constructor() {
-    super();
+  constructor(connection: any) {
+    super(connection);
     this.tables = {
       users: "users",
       cards: "cards",

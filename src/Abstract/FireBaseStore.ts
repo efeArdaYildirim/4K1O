@@ -9,8 +9,8 @@ import { DB } from "../implements/DB";
 
 abstract class FireBaseStore implements DB {
   db!: FirebaseFirestore.Firestore;
-  constructor() {
-    this.db = firestore();
+  constructor(connectin: any) {
+    this.db = connectin;
   }
 
   //#region DBDataParse
