@@ -1,5 +1,5 @@
 import * as admin from "firebase-admin";
-import { FireBaseStore } from "../Abstract.Classes/FireBaseStore";
+import { FireBaseStore } from "../Abstract/FireBaseStore";
 import { ListRoomsQueryParams, QueryStringObj } from "../tipitipler/Extralar";
 import { SortQuery } from "../tipitipler/FireBaseStoreTypes";
 import { Room, Rooms } from "../tipitipler/Room";
