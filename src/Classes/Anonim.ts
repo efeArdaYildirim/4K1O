@@ -1,3 +1,4 @@
+import { AnonimFirebase } from "../Abstract/AnonimFirebase";
 import { QueryStringObj } from "../tipitipler/Extralar";
 import { SortQuery } from "../tipitipler/FireBaseStoreTypes";
 import { Room, Rooms } from "../tipitipler/Room";
@@ -5,9 +6,10 @@ import { User } from "../tipitipler/User";
 import { DAL } from "./DAL";
 import { Validator } from "./Validator";
 
-export class Anonim {
+export class Anonim extends AnonimFirebase {
   db: DAL;
   constructor(dal: DAL) {
+    super(dal);
     this.db = dal;
   }
 
