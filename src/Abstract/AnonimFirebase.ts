@@ -11,7 +11,7 @@ export class AnonimFirebase {
     this.app = new App(dal);
   }
 
-  validateBaisicUserData(data: any): Validator {
+  private validateBaisicUserData(data: any): Validator {
     return new Validator(data)
       .itIsshouldToBeThere([
         "landAgent",

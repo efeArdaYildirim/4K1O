@@ -1,25 +1,29 @@
 import { Room } from "../tipitipler/Room";
 import { User } from "../tipitipler/User";
+import { App } from "./App";
 import { DAL } from "./DAL";
 
 export class UserClass {
   db: DAL;
   uid: string;
-  constructor(uid: string, dal: DAL) {
+  app: any;
+  constructor(dal: DAL) {
     this.db = dal;
-    this.uid = uid;
+    this.uid = "";
+    this.app = new App(dal);
+  }
+
+  public set setUid(v: any) {
+    this.uid = v;
   }
 
   //#region getMe
   getMe(): Promise<User> {
-    return this.db
-      .getUserById(this.uid)
-      .then((data) => {
-        data.password = "";
-        if (data.landAgent) data.landAgent.turkisIdNumber = "";
-        return data;
-      })
-      .catch((err) => err);
+    return this.db.getUserById(this.uid).then((data) => {
+      data.password = "";
+      if (data.landAgent) data.landAgent.turkisIdNumber = "";
+      return data;
+    });
   }
   //#endregion getMe
 
@@ -33,22 +37,19 @@ export class UserClass {
 
   //#region updateMe
   updateMe(data: User | any): Promise<User> {
-    return this.getMe()
-      .then((me) => {
-        if (me.isLandAgent) {
-          delete data.landAgent?.turkisIdNumber;
-          delete data.landAgent?.firstName;
-          delete data.landAgent?.lastName;
-        } else if (!me.isLandAgent && data.isLangAgent && data.landAgent) {
-          // tc kontrol daha yazilmadi
-          if (!true) throw new Error("yanlis tc");
-        }
-        data.disabled = true;
-        // send mail daha yazilmadi
-        delete data.rank;
-        return this.db.updateUserById(this.uid, data);
-      })
-      .catch((err) => err);
+    return this.getMe().then((me) => {
+      if (me.isLandAgent) {
+        delete data.landAgent?.turkisIdNumber;
+        delete data.landAgent?.firstName;
+        delete data.landAgent?.lastName;
+      } else if (!me.isLandAgent && data.isLangAgent && data.landAgent) {
+        this.app.turkisIdCheck(data.landAgent);
+      }
+      data.disabled = true;
+      // send mail daha yazilmadi
+      delete data.rank;
+      return this.db.updateUserById(this.uid, data);
+    });
   }
   //#endregion updateMe
 
