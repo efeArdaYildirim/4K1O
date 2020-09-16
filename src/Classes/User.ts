@@ -16,7 +16,7 @@ export class UserClass {
       .getUserById(this.uid)
       .then((data) => {
         data.password = "";
-        if (data.langAgent) data.langAgent.turkisIdNumber = "";
+        if (data.landAgent) data.landAgent.turkisIdNumber = "";
         return data;
       })
       .catch((err) => err);
@@ -35,11 +35,11 @@ export class UserClass {
   updateMe(data: User | any): Promise<User> {
     return this.getMe()
       .then((me) => {
-        if (me.isLangAgent) {
-          delete data.langAgent?.turkisIdNumber;
-          delete data.langAgent?.firstName;
-          delete data.langAgent?.lastName;
-        } else if (!me.isLangAgent && data.isLangAgent && data.langAgent) {
+        if (me.isLandAgent) {
+          delete data.landAgent?.turkisIdNumber;
+          delete data.landAgent?.firstName;
+          delete data.landAgent?.lastName;
+        } else if (!me.isLandAgent && data.isLangAgent && data.landAgent) {
           // tc kontrol daha yazilmadi
           if (!true) throw new Error("yanlis tc");
         }
