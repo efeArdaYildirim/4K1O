@@ -5,8 +5,10 @@ import { User } from "../tipitipler/User";
 import { App } from "../Classes/App";
 export class AnonimFirebase {
   db: DAL;
+  app: App;
   constructor(dal: DAL) {
     this.db = dal;
+    this.app = new App(dal);
   }
 
   validateBaisicUserData(data: any): Validator {
@@ -37,7 +39,7 @@ export class AnonimFirebase {
       "lastName",
       "phoneNumber",
     ]);
-    if (user.landAgent) App.turkisIdCheck(user.landAgent);
+    if (user.landAgent) this.app.turkisIdCheck(user.landAgent);
     else throw new Error("eksik veri");
     const createdUser: admin.auth.UserRecord = await admin.auth().createUser({
       email: user.email,
@@ -46,7 +48,14 @@ export class AnonimFirebase {
       displayName: user.name,
       disabled: true,
     });
-
+    /* // bu kod fire base de calismiyacak
+    this.app.sendMailToReciver({
+      to: user.email,
+      text: "heasbi dogrulamak icin tikla",
+      subject: "hesap dogrulama",
+      html: "",
+    });
+    */
     return this.db.creatUser({ data: user, id: createdUser.uid });
   }
 }

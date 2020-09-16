@@ -47,16 +47,23 @@ export class App {
     }
   }
 
-  async sendMailToReciver(data: PayloadOfEMail) {
-    const info = this.transporter.sendMail(data);
-    functions.logger.info("sendMailToReviver", {
-      arguments,
-      mailUrl: getTestMessageUrl(info),
-    });
-    return info;
+  sendMailToReciver(data: PayloadOfEMail) {
+    this.transporter
+      .sendMail({ ...data, from: "info@4k1o.com" })
+      .then((info: any) => {
+        functions.logger.info("sendMailToReviver", {
+          arguments,
+          mailUrl: getTestMessageUrl(info),
+        });
+      })
+      .catch((err: any) => {
+        functions.logger.error("sendMailToReviver", { err, arguments });
+      });
+
+    return;
   }
 
-  static turkisIdCheck(id: any): void {
+  turkisIdCheck(id: any): void {
     return;
   }
 }
