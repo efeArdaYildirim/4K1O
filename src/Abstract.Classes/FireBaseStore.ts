@@ -144,7 +144,7 @@ abstract class FireBaseStore implements DB {
    * @param {string} table
    * @param {string} id
    */
-  async updateById(table: string, id: string, data: any): Promise<JSON> {
+  async updateById(table: string, id: string, data: any): Promise<Object|Error> {
     try {
       let result = await this.getById(table, id, false);
       result = result as firestore.DocumentReference<firestore.DocumentData>;
