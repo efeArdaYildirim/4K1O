@@ -1,4 +1,3 @@
-import { DAL } from "../Classes/DAL";
 import { firestore } from "firebase-admin";
 import * as functions from "firebase-functions";
 import {
@@ -10,9 +9,8 @@ import { DB } from "../implements/DB";
 
 abstract class FireBaseStore implements DB {
   db!: FirebaseFirestore.Firestore;
-  connection!: DAL;
-  constructor(connection: firestore.Firestore) {
-    this.db = connection;
+  constructor() {
+    this.db = firestore();
   }
 
   //#region DBDataParse
@@ -76,7 +74,7 @@ abstract class FireBaseStore implements DB {
     limit,
     index = 0,
     sort,
-  }: FilterFuncParams): Promise<JSON[]> {
+  }: FilterFuncParams): Promise<Object[]> {
     const result = this.db.collection(table);
     queryArr.forEach((query) =>
       result.where(query.collOfTable, query.query, query.mustBeData)
@@ -126,8 +124,11 @@ abstract class FireBaseStore implements DB {
     try {
       const result = (await this.getById(
         table,
-        id
+        id,
+        false
       )) as firestore.DocumentReference<firestore.DocumentData>;
+      const { data } = await this.DBDataParse(result);
+      functions.logger.info("delById", { arguments, data });
       await result.delete();
       return true;
     } catch (err) {
@@ -143,10 +144,16 @@ abstract class FireBaseStore implements DB {
    * @param {string} table
    * @param {string} id
    */
-  async updateById(table: string, id: string, data: any): Promise<JSON> {
+  async updateById(
+    table: string,
+    id: string,
+    data: any
+  ): Promise<Object | Error> {
     try {
       let result = await this.getById(table, id, false);
       result = result as firestore.DocumentReference<firestore.DocumentData>;
+      const { data: dataForLog } = await this.DBDataParse(result);
+      functions.logger.info("updateById", { arguments, dataForLog });
       const { data: parsedData } = await this.DBDataParse(
         await result.update(data)
       );

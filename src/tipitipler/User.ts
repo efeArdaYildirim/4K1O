@@ -1,4 +1,4 @@
-import { LangAgent } from "./LangAgent";
+import { LandAgentT } from "./LandAgent";
 
 type User = JSON & {
   name: string;
@@ -6,9 +6,9 @@ type User = JSON & {
   photo?: string;
   password: string;
   rank?: number;
-  isLangAgent: boolean;
-  birdthDay: string;
-  langAgent?: LangAgent;
+  isLandAgent: boolean;
+  yearOfBirdth: string;
+  landAgent?: LandAgentT;
   disabled: boolean;
 };
 

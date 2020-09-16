@@ -1,6 +1,7 @@
 import { SortQuery } from "./FireBaseStoreTypes";
 
 type PayloadOfEMail = {
+  to: string;
   subject: string;
   text: string;
   html: string;
@@ -23,6 +24,7 @@ type ListRoomsQueryParams = {
   index: number;
   sort: SortQuery[];
   limit: number;
+  city?: string;
 };
 
 export {

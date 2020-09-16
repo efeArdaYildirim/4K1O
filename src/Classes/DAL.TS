@@ -8,8 +8,8 @@ import { User } from "../tipitipler/User";
 class DAL extends FireBaseStore {
   tables: { users: string; cards: string; rooms: string };
 
-  constructor(conn: any) {
-    super(conn!);
+  constructor() {
+    super();
     this.tables = {
       users: "users",
       cards: "cards",
@@ -104,28 +104,44 @@ class DAL extends FireBaseStore {
   }
   //#endregion hideRoomById
 
-  //#region addLikeRoomById
+  //#region addLikeOrDislikeRoomById
   addLikeOrDislikeRoomById(id: string, like: boolean): Promise<Room> {
     let value: any;
-    if (like) value = admin.firestore.FieldValue.increment(1);
-    else value = admin.firestore.FieldValue.increment(-1);
-    return this.updateById(this.tables.rooms, id, { like: value }) as Promise<
-      Room
-    >;
+    let result: any;
+    if (like) {
+      value = admin.firestore.FieldValue.increment(1);
+      result = this.updateById(this.tables.rooms, id, {
+        like: value,
+      }) as Promise<Room>;
+    } else {
+      value = admin.firestore.FieldValue.increment(1);
+      result = this.updateById(this.tables.rooms, id, {
+        dislike: value,
+      }) as Promise<Room>;
+    }
+    return result;
   }
-  //#endregion addLikeRoomById
+  //#endregion addLikeOrDislikeRoomById
 
   //#region upDateRoomById
 
-  upDateRoomById(id: string, data: JSON) {
-    return this.updateById(this.tables.rooms, id, data);
+  upDateRoomById(id: string, data: object): Promise<Room> {
+    return this.updateById(this.tables.rooms, id, data) as Promise<Room>;
   }
 
   //#endregion upDateRoomById
 
   //#region listRoomByRankORCity
 
-  listRoomByRankORCity({ queryArr, index, sort, limit }: ListRoomsQueryParams) {
+  listRoomByRankORCity({
+    queryArr,
+    index,
+    sort,
+    limit,
+    city,
+  }: ListRoomsQueryParams) {
+    if (city)
+      queryArr.push({ collOfTable: "city", query: "==", mustBeData: city });
     const sortArray: SortQuery[] = [
       { orderBy: "rank", sortBy: "desc" },
       ...sort,
@@ -136,7 +152,7 @@ class DAL extends FireBaseStore {
       limit,
       index,
       sort: sortArray,
-    });
+    }) as Promise<Rooms>;
   }
 
   //#endregion listRoomByRankORCity

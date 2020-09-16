@@ -1,8 +1,8 @@
-type LangAgent = {
+type LandAgentT = {
   turkisIdNumber: string;
   firstName: string;
   lastName: string;
   phoneNumber: string;
 };
 
-export { LangAgent };
+export { LandAgentT };
