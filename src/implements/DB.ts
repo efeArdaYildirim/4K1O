@@ -6,7 +6,8 @@ import {
 } from "../tipitipler/FireBaseStoreTypes";
 
 interface DB {
-  DBDataParse(
+  /*
+  private DBDataParse(
     dataOfDbResult: any,
     shouldIDo: boolean
   ): Promise<DBDataParseReturnType>;
@@ -14,7 +15,7 @@ interface DB {
     table,
     queryArr,
     returnDBQuery,
-  }: FilterFuncParams): Promise<Object[]>;
+  }: FilterFuncParams): Promise<Object[]>;*/
   writeAData({ table, data, id }: WriteAData): Promise<Boolean>;
   delById(table: string, id: string): Promise<boolean | Error>;
   updateById(table: string, id: string, data: any): Promise<Object | Error>;

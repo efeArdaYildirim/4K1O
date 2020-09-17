@@ -87,6 +87,19 @@ const updateRoom = async function (
   }
 };
 
+const deleteMe = async function (data: any, context: https.CallableContext) {
+  try {
+    logger.info("deleteMe", { arguments });
+    if (!context.auth)
+      throw new Error("baska kullanici silmeye calisma islemi");
+    user.setUid = context.auth.uid;
+    return { status: true, data: await user.delMe() };
+  } catch (err) {
+    logger.error("deleteMe", { err, arguments });
+    return { statu: false };
+  }
+};
+
 exports = {
   login: https.onCall((data, context) => {
     return { status: false };
@@ -107,9 +120,7 @@ exports = {
   }),
   aESdelRoom: https.onCall(delRoom),
   aEsupdateRoom: https.onCall(updateRoom),
-  aUdeleteProfile: https.onCall((data, context) => {
-    return { status: false };
-  }),
+  aUdeleteProfile: https.onCall(deleteMe),
   aUupdateProfile: https.onCall(updateMe),
   aUaddCard: https.onCall((data, context) => {
     return { status: false };

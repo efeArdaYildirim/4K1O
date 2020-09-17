@@ -22,7 +22,7 @@ abstract class FireBaseStore implements DB {
    * @return {json} data
    * @return {boolean} exists
    */
-  async DBDataParse(
+  private async DBDataParse(
     dataOfDbResult: any,
     shouldIDo: boolean = true
   ): Promise<DBDataParseReturnType> {
