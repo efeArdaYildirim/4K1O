@@ -70,6 +70,23 @@ const delRoom = async function (data: string, context: https.CallableContext) {
   }
 };
 
+const updateRoom = async function (
+  data: { room: Room; id: string },
+  context: https.CallableContext
+) {
+  try {
+    logger.info("updateRoom", { arguments });
+    satan.setUid = context.auth!.uid;
+    if (!satan.amILandAgent())
+      throw new Error("basksinin odasini gunceleyemesi");
+    const updated = await satan.updateMyRoom(data.id, data.room);
+    return { status: true, updated };
+  } catch (err) {
+    logger.error("updateRoom", { err, arguments });
+    return { status: false };
+  }
+};
+
 exports = {
   login: https.onCall((data, context) => {
     return { status: false };
@@ -89,13 +106,11 @@ exports = {
     return { status: false };
   }),
   aESdelRoom: https.onCall(delRoom),
-  aEsupdateRoom: https.onCall((data, context) => {
-    return { status: false };
-  }),
+  aEsupdateRoom: https.onCall(updateRoom),
   aUdeleteProfile: https.onCall((data, context) => {
     return { status: false };
   }),
-  aUupdateProfile: https.onCall(await updateMe),
+  aUupdateProfile: https.onCall(updateMe),
   aUaddCard: https.onCall((data, context) => {
     return { status: false };
   }),
