@@ -87,7 +87,7 @@ const updateRoom = async function (
   }
 };
 
-const deleteMe = async function (data: any, context: https.CallableContext) {
+const deleteMe = async function (_data: any, context: https.CallableContext) {
   try {
     logger.info("deleteMe", { arguments });
     if (!context.auth)
@@ -97,6 +97,39 @@ const deleteMe = async function (data: any, context: https.CallableContext) {
   } catch (err) {
     logger.error("deleteMe", { err, arguments });
     return { statu: false };
+  }
+};
+
+const cardJobs = async function (
+  data: { id: string; add: boolean },
+  context: https.CallableContext
+) {
+  try {
+    logger.info("addCard", { arguments });
+    if (!context.auth) throw new Error("login olamdan carda veri yazma");
+    user.setUid = context.auth.uid;
+    if (data.add) await user.roomAddToCart(data.id);
+    else await user.roomDelToCart(data.id);
+    return { status: true };
+  } catch (err) {
+    logger.error("addCard", { err, arguments });
+    return { status: false };
+  }
+};
+
+const rank = async function (
+  data: { id: string; rank: boolean },
+  context: https.CallableContext
+) {
+  try {
+    logger.info("rank", { arguments });
+    if (!context.auth) throw new Error("login olamdan rank verme");
+    user.setUid = context.auth.uid;
+    await user.rankRoom(data.id, data.rank);
+    return { status: true };
+  } catch (err) {
+    logger.error("rank", { err, arguments });
+    return { status: false };
   }
 };
 
@@ -122,15 +155,9 @@ exports = {
   aEsupdateRoom: https.onCall(updateRoom),
   aUdeleteProfile: https.onCall(deleteMe),
   aUupdateProfile: https.onCall(updateMe),
-  aUaddCard: https.onCall((data, context) => {
-    return { status: false };
-  }),
-  aUrank: https.onCall((data, context) => {
-    return { status: false };
-  }),
-  aUdelCard: https.onCall((data, context) => {
-    return { status: false };
-  }),
+  aUaddCard: https.onCall(cardJobs),
+  aUrank: https.onCall(rank),
+  aUdelCard: https.onCall(cardJobs),
 };
 
 /*
@@ -160,7 +187,6 @@ exports.roomList = https.onCall(async function (data: ListRoomsQueryParams) {
     return err;
   }
 });
-*/
 
 exports.delMe = https.onCall(async function (data, context) {
   try {
@@ -175,3 +201,4 @@ exports.delMe = https.onCall(async function (data, context) {
     return { status: false };
   }
 });
+*/
