@@ -104,14 +104,14 @@ class DAL extends FireBaseStore {
 
   //#region addLikeOrDislikeRoomById
   private dislike(id: string): Promise<Room> {
-    let value = admin.firestore.FieldValue.increment(1);
+    const value = admin.firestore.FieldValue.increment(1);
     return this.updateById(this.tables.rooms, id, {
       dislike: value,
     }) as Promise<Room>;
   }
 
   private like(id: string): Promise<Room> {
-    let value = admin.firestore.FieldValue.increment(1);
+    const value = admin.firestore.FieldValue.increment(1);
     return this.updateById(this.tables.rooms, id, {
       like: value,
     }) as Promise<Room>;

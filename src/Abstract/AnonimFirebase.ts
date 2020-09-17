@@ -42,13 +42,15 @@ export class AnonimFirebase {
 
     if (user.landAgent) this.app.turkisIdCheck(user.landAgent);
     else throw new Error("eksik veri");
+
     const createdUser: admin.auth.UserRecord = await admin.auth().createUser({
       email: user.email,
-      phoneNumber: user.landAgent.phoneNumber,
+      //phoneNumber: user.landAgent.phoneNumber,
       password: user.password,
       displayName: user.name,
       disabled: true,
     });
+
     /* // bu kod fire base de calismiyacak
     this.app.sendMailToReciver({
       to: user.email,

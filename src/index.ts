@@ -19,53 +19,70 @@ const satan = new LandAgent(db);
 
 const updateMe = async function (data: any, context: any) {
   try {
-    logger.info("updateMe", { arguments });
+    logger.info("updateMe", {
+      arguments: { data: data, context: context.auth },
+    });
     if (!context.auth)
       throw new Error("login olmada kullanici update etmeye calisma islemi");
     user.setUid = context.auth.uid;
     return { status: true, data: await user.updateMe(data) };
   } catch (err) {
-    logger.error("updateMe", { err, arguments });
+    logger.error("updateMe", {
+      err,
+      arguments: { data: data, context: context.auth },
+    });
     return { statu: false };
   }
 };
 
-const logup = async function (data: any, context: any) {
+const logup = async function ({ data, context }: any) {
   try {
-    logger.info("addLandAgent", { arguments });
+    logger.info("addLandAgent", {
+      arguments: { data: data, context: context.auth },
+    });
     if (context.auth) throw new Error("loginken hesap olusturamasin");
     await anon.addSatan(data);
     return { status: true };
   } catch (err) {
-    logger.error("addLandAgent", { err, arguments });
+    logger.error("addLandAgent", { err, arguments: { data, context } });
     return { status: false };
   }
 };
 
 const addRoom = async function (data: Room, context: https.CallableContext) {
   try {
-    logger.info("addRoom", { arguments });
+    logger.info("addRoom", {
+      arguments: { data: data, context: context.auth },
+    });
     satan.setUid = context.auth!.uid;
     if (!satan.amILandAgent())
       throw new Error("satici olmadan oda ekelyemesin");
     const isAdded = await satan.addRoom(data);
     return { status: isAdded };
   } catch (err) {
-    logger.error("addRoom", { err, arguments });
+    logger.error("addRoom", {
+      err,
+      arguments: { data: data, context: context.auth },
+    });
     return { status: false };
   }
 };
 
 const delRoom = async function (data: string, context: https.CallableContext) {
   try {
-    logger.info("delRoom", { arguments });
+    logger.info("delRoom", {
+      arguments: { data: data, context: context.auth },
+    });
     satan.setUid = context.auth!.uid;
     let isDeleted: boolean;
     if (!satan.amILandAgent()) throw new Error("basksinin odasini silemesin");
     else isDeleted = (await satan.delMyRoom(data)) as boolean;
     return { status: isDeleted };
   } catch (err) {
-    logger.error("delRoom", { err, arguments });
+    logger.error("delRoom", {
+      err,
+      arguments: { data: data, context: context.auth },
+    });
     return { status: false };
   }
 };
@@ -75,27 +92,37 @@ const updateRoom = async function (
   context: https.CallableContext
 ) {
   try {
-    logger.info("updateRoom", { arguments });
+    logger.info("updateRoom", {
+      arguments: { data: data, context: context.auth },
+    });
     satan.setUid = context.auth!.uid;
     if (!satan.amILandAgent())
       throw new Error("basksinin odasini gunceleyemesi");
     const updated = await satan.updateMyRoom(data.id, data.room);
     return { status: true, updated };
   } catch (err) {
-    logger.error("updateRoom", { err, arguments });
+    logger.error("updateRoom", {
+      err,
+      arguments: { data: data, context: context.auth },
+    });
     return { status: false };
   }
 };
 
 const deleteMe = async function (_data: any, context: https.CallableContext) {
   try {
-    logger.info("deleteMe", { arguments });
+    logger.info("deleteMe", {
+      arguments: { data: _data, context: context.auth },
+    });
     if (!context.auth)
       throw new Error("baska kullanici silmeye calisma islemi");
     user.setUid = context.auth.uid;
     return { status: true, data: await user.delMe() };
   } catch (err) {
-    logger.error("deleteMe", { err, arguments });
+    logger.error("deleteMe", {
+      err,
+      arguments: { data: _data, context: context.auth },
+    });
     return { statu: false };
   }
 };
@@ -105,14 +132,14 @@ const cardJobs = async function (
   context: https.CallableContext
 ) {
   try {
-    logger.info("addCard", { arguments });
+    logger.info("addCard", { arguments: { data: data, context: context.auth } });
     if (!context.auth) throw new Error("login olamdan carda veri yazma");
     user.setUid = context.auth.uid;
     if (data.add) await user.roomAddToCart(data.id);
     else await user.roomDelToCart(data.id);
     return { status: true };
   } catch (err) {
-    logger.error("addCard", { err, arguments });
+    logger.error("addCard", { err, arguments: { data: data, context: context.auth } });
     return { status: false };
   }
 };
@@ -122,22 +149,24 @@ const rank = async function (
   context: https.CallableContext
 ) {
   try {
-    logger.info("rank", { arguments });
+    logger.info("rank", { arguments: { data: data, context: context.auth } });
     if (!context.auth) throw new Error("login olamdan rank verme");
     user.setUid = context.auth.uid;
     await user.rankRoom(data.id, data.rank);
     return { status: true };
   } catch (err) {
-    logger.error("rank", { err, arguments });
+    logger.error("rank", { err, arguments: { data: data, context: context.auth } });
     return { status: false };
   }
 };
 
-exports = {
+export default {
   login: https.onCall((data, context) => {
     return { status: false };
   }),
-  logup: https.onCall(logup),
+  logup: https.onCall((data, context) => {
+    return logup({ data, context }).then((res) => res);
+  }),
   roomList: https.onCall((data, context) => {
     return { status: false };
   }),
