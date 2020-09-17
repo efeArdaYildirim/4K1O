@@ -2,6 +2,7 @@ import { Room } from "../tipitipler/Room";
 import { User } from "../tipitipler/User";
 import { App } from "./App";
 import { DAL } from "./DAL";
+import { Validator } from "./Validator";
 
 export class UserClass {
   db: DAL;
@@ -16,7 +17,26 @@ export class UserClass {
   public set setUid(v: any) {
     this.uid = v;
   }
-
+  //#region private
+  private userDartaValidte(data: User) {
+    new Validator(data)
+      .itIsshouldToBeThere([
+        "isLandAgent",
+        "name",
+        "email",
+        "password",
+        "yearOfBirdth",
+      ])
+      .maxLength("name", 64)
+      .minLength("name", 2)
+      .maxWordCoud("name", 4)
+      .isEmail("email")
+      .minLength("password", 8)
+      .maxLength("password", 64)
+      .isBoolean("isLandAgent")
+      .isNumber("yearOfBirdth");
+  }
+  //#endregion private
   //#region getMe
   getMe(): Promise<User> {
     return this.db.getUserById(this.uid).then((data) => {
@@ -37,6 +57,7 @@ export class UserClass {
 
   //#region updateMe
   updateMe(data: User | any): Promise<User> {
+    this.userDartaValidte(data);
     return this.getMe().then((me) => {
       if (me.isLandAgent) {
         delete data.landAgent?.turkisIdNumber;

@@ -20,20 +20,19 @@ export class Validator {
       throw new Error("veri cok kucuk");
     return this;
   }
+  private textToWord(data: string): string[] {
+    let dataTrim = data.trim();
+    while (dataTrim.includes("  ")) dataTrim = dataTrim.replace(/  /g, " ");
+    return data.split(" ");
+  }
   maxWordCoud(obj: string, len: number) {
-    let nowData: string | string[] = obj;
-    nowData = nowData.trim();
-    while (nowData.includes("  ")) nowData = nowData.replace(/  /g, " ");
-    nowData = nowData.split(" ");
-    if (nowData.length > len) throw new Error("cok fazla kelime");
+    const words = this.textToWord(this.data[obj]);
+    if (words.length > len) throw new Error("cok fazla kelime");
     return this;
   }
   minWordCount(obj: string, len: number) {
-    let nowData: string | string[] = obj;
-    nowData = nowData.trim();
-    while (nowData.includes("  ")) nowData = nowData.replace(/  /g, " ");
-    nowData = nowData.split(" ");
-    if (nowData.length < len) throw new Error("cok fazla kelime");
+    const words = this.textToWord(this.data[obj]);
+    if (words.length < len) throw new Error("cok fazla kelime");
     return this;
   }
   isItUrl(obj: string) {

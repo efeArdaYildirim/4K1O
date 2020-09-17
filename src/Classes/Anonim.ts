@@ -20,6 +20,15 @@ export class Anonim extends AnonimFirebase {
     index: number = 0,
     limit: number = 50
   ): Promise<Rooms> {
+    new Validator(queryArr)
+      .itIsshouldToBeThere(["collOfTable", "query", "mustBeData"])
+      .maxLength("collOfTable", 64)
+      .minLength("collOfTable", 2)
+      .maxLength("query", 2)
+      .minLength("query", 1)
+      .minLength("mustBeData", 2)
+      .maxLength("mustBeData", 64);
+
     return this.db
       .listRoomByRankORCity({ queryArr, sort, limit, index, city })
       .then((rooms: Rooms) => {

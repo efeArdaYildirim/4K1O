@@ -22,22 +22,6 @@ const updateMe = async function (data: any, context: any) {
     logger.info("updateMe", { arguments });
     if (!context.auth)
       throw new Error("login olmada kullanici update etmeye calisma islemi");
-    new Validator(data)
-      .itIsshouldToBeThere([
-        "isLandAgent",
-        "name",
-        "email",
-        "password",
-        "yearOfBirdth",
-      ])
-      .maxLength("name", 64)
-      .minLength("name", 2)
-      .maxWordCoud("name", 4)
-      .isEmail("email")
-      .minLength("password", 8)
-      .maxLength("password", 64)
-      .isBoolean("isLandAgent")
-      .isNumber("yearOfBirdth");
     user.setUid = context.auth.uid;
     return { status: true, data: await user.updateMe(data) };
   } catch (err) {

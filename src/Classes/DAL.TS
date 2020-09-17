@@ -53,9 +53,7 @@ class DAL extends FireBaseStore {
     return this.filter({
       table: this.tables.users,
       queryArr,
-    })
-      .then((res: any[]) => res[0] as User)
-      .catch((err) => err);
+    }).then((res: any[]) => res[0] as User);
   }
 
   //#endregion searchUserByNameAndPasswd
@@ -105,21 +103,23 @@ class DAL extends FireBaseStore {
   //#endregion hideRoomById
 
   //#region addLikeOrDislikeRoomById
+  private dislike(id: string): Promise<Room> {
+    let value = admin.firestore.FieldValue.increment(1);
+    return this.updateById(this.tables.rooms, id, {
+      dislike: value,
+    }) as Promise<Room>;
+  }
+
+  private like(id: string): Promise<Room> {
+    let value = admin.firestore.FieldValue.increment(1);
+    return this.updateById(this.tables.rooms, id, {
+      like: value,
+    }) as Promise<Room>;
+  }
+
   addLikeOrDislikeRoomById(id: string, like: boolean): Promise<Room> {
-    let value: any;
-    let result: any;
-    if (like) {
-      value = admin.firestore.FieldValue.increment(1);
-      result = this.updateById(this.tables.rooms, id, {
-        like: value,
-      }) as Promise<Room>;
-    } else {
-      value = admin.firestore.FieldValue.increment(1);
-      result = this.updateById(this.tables.rooms, id, {
-        dislike: value,
-      }) as Promise<Room>;
-    }
-    return result;
+    if (like) return this.like(id);
+    return this.dislike(id);
   }
   //#endregion addLikeOrDislikeRoomById
 

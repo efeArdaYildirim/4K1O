@@ -11,8 +11,8 @@ export class AnonimFirebase {
     this.app = new App(dal);
   }
 
-  private validateBaisicUserData(data: any): Validator {
-    return new Validator(data)
+  private validateBaisicUserData(data: User): void {
+    new Validator(data)
       .itIsshouldToBeThere([
         "landAgent",
         "isLandAgent",
@@ -29,16 +29,17 @@ export class AnonimFirebase {
       .maxLength("password", 64)
       .isBoolean("isLandAgent")
       .isNumber("yearOfBirdth");
-  }
-
-  async addSatan(user: User): Promise<boolean> {
-    this.validateBaisicUserData(user);
-    new Validator(user.landAgent!).itIsshouldToBeThere([
+    new Validator(data.landAgent).itIsshouldToBeThere([
       "turkisIdNumber",
       "firstName",
       "lastName",
       "phoneNumber",
     ]);
+  }
+
+  async addSatan(user: User): Promise<boolean> {
+    this.validateBaisicUserData(user);
+
     if (user.landAgent) this.app.turkisIdCheck(user.landAgent);
     else throw new Error("eksik veri");
     const createdUser: admin.auth.UserRecord = await admin.auth().createUser({

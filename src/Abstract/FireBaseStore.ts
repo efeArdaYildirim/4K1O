@@ -122,11 +122,8 @@ abstract class FireBaseStore implements DB {
    */
   async delById(table: string, id: string): Promise<boolean | Error> {
     try {
-      const result = (await this.getById(
-        table,
-        id,
-        false
-      )) as firestore.DocumentReference<firestore.DocumentData>;
+      const result: any = await this.getById(table, id, false);
+      //as firestore.DocumentReference<firestore.DocumentData>;
       const { data } = await this.DBDataParse(result);
       functions.logger.info("delById", { arguments, data });
       await result.delete();
@@ -150,8 +147,7 @@ abstract class FireBaseStore implements DB {
     data: any
   ): Promise<Object | Error> {
     try {
-      let result = await this.getById(table, id, false);
-      result = result as firestore.DocumentReference<firestore.DocumentData>;
+      const result: any = await this.getById(table, id, false);
       const { data: dataForLog } = await this.DBDataParse(result);
       functions.logger.info("updateById", { arguments, dataForLog });
       const { data: parsedData } = await this.DBDataParse(
