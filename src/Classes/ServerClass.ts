@@ -149,4 +149,25 @@ export class ServerClass {
       return { status: false };
     }
   }
+
+  async rank(
+    data: { id: string; rank: boolean },
+    context: https.CallableContext
+  ) {
+    try {
+      logger.info("rank", { arguments: { data: data, context: context.auth } });
+      if (!context.auth) throw new Error("login olamdan rank verme");
+      this.user.setUid = context.auth.uid;
+      await this.user.rankRoom(data.id, data.rank);
+      return { status: true };
+    } catch (err) {
+      logger.error("rank", {
+        err,
+        arguments: { data: data, context: context.auth },
+      });
+      return { status: false };
+    }
+  }
+
+  
 }
