@@ -127,4 +127,26 @@ export class ServerClass {
       return { statu: false };
     }
   }
+
+  async cardJobs(
+    data: { id: string; add: boolean },
+    context: https.CallableContext
+  ) {
+    try {
+      logger.info("addCard", {
+        arguments: { data: data, context: context.auth },
+      });
+      if (!context.auth) throw new Error("login olamdan carda veri yazma");
+      this.user.setUid = context.auth.uid;
+      if (data.add) await this.user.roomAddToCart(data.id);
+      else await this.user.roomDelToCart(data.id);
+      return { status: true };
+    } catch (err) {
+      logger.error("addCard", {
+        err,
+        arguments: { data: data, context: context.auth },
+      });
+      return { status: false };
+    }
+  }
 }
