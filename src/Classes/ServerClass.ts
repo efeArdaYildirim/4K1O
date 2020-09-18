@@ -1,11 +1,12 @@
 import { https, logger } from "firebase-functions";
+import { ServerI } from "../implements/ServerI";
 import { Room } from "../tipitipler/Room";
 import { Anonim } from "./Anonim";
 import { DAL } from "./DAL";
 import { LandAgent } from "./Satan";
 import { UserClass } from "./User";
 
-export class ServerClass {
+export class ServerClass implements ServerI {
   anon: Anonim;
   user: UserClass;
   db: DAL;
@@ -15,6 +16,21 @@ export class ServerClass {
     this.anon = new Anonim(this.db);
     this.user = new UserClass(this.db);
     this.satan = new LandAgent(this.db);
+  }
+  login(data: any, context: any) {
+    throw new Error("Method not implemented.");
+  }
+  roomList(data: any, context: any) {
+    throw new Error("Method not implemented.");
+  }
+  romSearch(data: any, context: any) {
+    throw new Error("Method not implemented.");
+  }
+  roomLook(data: any, context: any) {
+    throw new Error("Method not implemented.");
+  }
+  getMyRooms(data: any, context: any) {
+    throw new Error("Method not implemented.");
   }
 
   async updateMe(data: any, context: any) {
@@ -168,6 +184,4 @@ export class ServerClass {
       return { status: false };
     }
   }
-
-  
 }
