@@ -168,6 +168,4 @@ export class ServerClass {
       return { status: false };
     }
   }
-
-  
 }
