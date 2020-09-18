@@ -1,4 +1,5 @@
-import { logger } from "firebase-functions";
+import { https, logger } from "firebase-functions";
+import { Room } from '../tipitipler/Room';
 import { Anonim } from "./Anonim";
 import { DAL } from "./DAL";
 import { LandAgent } from "./Satan";
@@ -47,4 +48,25 @@ export class ServerClass {
       return { status: false };
     }
   }
+
+  async addRoom(data: Room, context: https.CallableContext) {
+    try {
+      logger.info("addRoom", {
+        arguments: { data: data, context: context.auth },
+      });
+      this.satan.setUid = context.auth!.uid;
+      if (!this.satan.amILandAgent())
+        throw new Error("satici olmadan oda ekelyemesin");
+      const isAdded = await this.satan.addRoom(data);
+      return { status: isAdded };
+    } catch (err) {
+      logger.error("addRoom", {
+        err,
+        arguments: { data: data, context: context.auth },
+      });
+      return { status: false };
+    }
+  }
+
+  
 }
