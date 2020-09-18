@@ -33,4 +33,18 @@ export class ServerClass {
       return { statu: false };
     }
   }
+
+  async logup({ data, context }: any) {
+    try {
+      logger.info("addLandAgent", {
+        arguments: { data: data, context: context.auth },
+      });
+      if (context.auth) throw new Error("loginken hesap olusturamasin");
+      await this.anon.addSatan(data);
+      return { status: true };
+    } catch (err) {
+      logger.error("addLandAgent", { err, arguments: { data, context } });
+      return { status: false };
+    }
+  }
 }
