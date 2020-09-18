@@ -110,5 +110,21 @@ export class ServerClass {
     }
   }
 
-
+  async deleteMe(_data: any, context: https.CallableContext) {
+    try {
+      logger.info("deleteMe", {
+        arguments: { data: _data, context: context.auth },
+      });
+      if (!context.auth)
+        throw new Error("baska kullanici silmeye calisma islemi");
+      this.user.setUid = context.auth.uid;
+      return { status: true, data: await this.user.delMe() };
+    } catch (err) {
+      logger.error("deleteMe", {
+        err,
+        arguments: { data: _data, context: context.auth },
+      });
+      return { statu: false };
+    }
+  }
 }
