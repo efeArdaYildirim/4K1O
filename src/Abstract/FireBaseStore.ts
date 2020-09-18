@@ -14,6 +14,21 @@ abstract class FireBaseStore implements DB {
   }
 
   //#region DBDataParse
+
+  private isWidthId({ rows, isWidthId = false }: any): object[] {
+    const out = [];
+    if (isWidthId) out.push(rows.data());
+    else {
+      rows.forEach((row: any) => {
+        out.push(row.data());
+      });
+    }
+    return out;
+  }
+  private isExists(exists: boolean): void {
+    if (!exists) throw new Error("veri yok");
+  }
+
   /**
    * firebase fire store den gelen verielri okumak icin yapilmasi gereken ler
    * retun data:json and exists:boolean
@@ -24,15 +39,14 @@ abstract class FireBaseStore implements DB {
    */
   private async DBDataParse(
     dataOfDbResult: any,
-    shouldIDo: boolean = true
+    shouldIDo: boolean = true,
+    isWidthId: boolean = false
   ): Promise<DBDataParseReturnType> {
     try {
       if (!shouldIDo) return { data: dataOfDbResult, exists: true };
-      const out: any[] = [];
       const rows = await dataOfDbResult.get();
-      rows.forEach((row: any) => {
-        out.push(row.data());
-      });
+      this.isExists(rows.exists);
+      const out = this.isWidthId({ rows, isWidthId });
       return { data: out, exists: rows.exists };
     } catch (err) {
       functions.logger.error("DBDataParse", {
@@ -58,7 +72,11 @@ abstract class FireBaseStore implements DB {
     JSON | Error | firestore.DocumentReference<firestore.DocumentData>
   > {
     const result = this.db.collection(table).doc(id);
-    const { data, exists } = await this.DBDataParse(result, returnDBQuery);
+    const { data, exists } = await this.DBDataParse(
+      result,
+      returnDBQuery,
+      true
+    );
     if (exists) return data[0];
     throw new Error("no data");
   }

@@ -13,6 +13,10 @@ export class LandAgent extends UserClass {
     // this.uid = uid;
   }
 
+  public test() {
+    console.error("nbr");
+  }
+
   private roomDataValidator(room: Room): void {
     new Validator(room)
       .itIsshouldNotToBeThere(["rank", "look", "like", "dislike", "id"])
@@ -24,7 +28,7 @@ export class LandAgent extends UserClass {
       .minWordCount("explain", 5)
       .isBoolean("isActive")
       .isNumber("price");
-    new Validator(room.location).isItUrl("mapsLink");
+    if (room.location) new Validator(room.location).isItUrl("mapsLink");
   }
 
   addRoom(room: Room) {

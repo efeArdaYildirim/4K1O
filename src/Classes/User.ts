@@ -14,7 +14,7 @@ export class UserClass {
     this.app = new App(dal);
   }
 
-  public set setUid(v: any) {
+  set setUid(v: string) {
     this.uid = v;
   }
   //#region private

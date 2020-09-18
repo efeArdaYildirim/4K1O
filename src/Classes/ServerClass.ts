@@ -77,7 +77,7 @@ export class ServerClass implements ServerI {
       return { status: isAdded };
     } catch (err) {
       logger.error("addRoom", {
-        err,
+        err: err.message,
         arguments: { data: data, context: context.auth },
       });
       return { status: false };
@@ -137,7 +137,7 @@ export class ServerClass implements ServerI {
       return { status: true, data: await this.user.delMe() };
     } catch (err) {
       logger.error("deleteMe", {
-        err,
+        err: err.message,
         arguments: { data: _data, context: context.auth },
       });
       return { statu: false };
