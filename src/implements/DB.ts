@@ -2,7 +2,7 @@ import { firestore } from "firebase-admin";
 import {
   DBDataParseReturnType,
   FilterFuncParams,
-  WriteAData,
+  WriteADataParams,
 } from "../tipitipler/FireBaseStoreTypes";
 
 interface DB {
@@ -16,7 +16,7 @@ interface DB {
     queryArr,
     returnDBQuery,
   }: FilterFuncParams): Promise<Object[]>;*/
-  writeAData({ table, data, id }: WriteAData): Promise<Boolean>;
+  writeAData({ table, data, id }: WriteADataParams): Promise<Boolean>;
   delById(table: string, id: string): Promise<boolean | Error>;
   updateById(table: string, id: string, data: any): Promise<Object | Error>;
 

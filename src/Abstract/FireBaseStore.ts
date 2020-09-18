@@ -1,9 +1,14 @@
 import { firestore } from "firebase-admin";
 import * as functions from "firebase-functions";
 import {
+  DBDataParseParams,
   DBDataParseReturnType,
+  DelByIdParams,
   FilterFuncParams,
-  WriteAData,
+  GetByIdParams,
+  IsWidthIdParams,
+  UpdateById,
+  WriteADataParams,
 } from "../tipitipler/FireBaseStoreTypes";
 import { DB } from "../implements/DB";
 
@@ -15,7 +20,7 @@ abstract class FireBaseStore implements DB {
 
   //#region DBDataParse
 
-  private isWidthId({ rows, isWidthId = false }: any): object[] {
+  private isWidthId({ rows, isWidthId = false }: IsWidthIdParams): object[] {
     const out = [];
     if (isWidthId) out.push(rows.data());
     else {
@@ -37,11 +42,11 @@ abstract class FireBaseStore implements DB {
    * @return {json} data
    * @return {boolean} exists
    */
-  private async DBDataParse(
-    dataOfDbResult: any,
-    shouldIDo: boolean = true,
-    isWidthId: boolean = false
-  ): Promise<DBDataParseReturnType> {
+  private async DBDataParse({
+    dataOfDbResult,
+    shouldIDo = true,
+    isWidthId = false,
+  }: DBDataParseParams): Promise<DBDataParseReturnType> {
     try {
       if (!shouldIDo) return { data: dataOfDbResult, exists: true };
       const rows = await dataOfDbResult.get();
@@ -64,19 +69,19 @@ abstract class FireBaseStore implements DB {
    * @param {string} table
    * @param {string} id
    */
-  async getById(
-    table: string,
-    id: string,
-    returnDBQuery: boolean = true
-  ): Promise<
+  async getById({
+    table,
+    id,
+    returnDBQuery = true,
+  }: GetByIdParams): Promise<
     JSON | Error | firestore.DocumentReference<firestore.DocumentData>
   > {
     const result = this.db.collection(table).doc(id);
-    const { data, exists } = await this.DBDataParse(
-      result,
-      returnDBQuery,
-      true
-    );
+    const { data, exists } = await this.DBDataParse({
+      dataOfDbResult: result,
+      shouldIDo: returnDBQuery,
+      isWidthId: true,
+    });
     if (exists) return data[0];
     throw new Error("no data");
   }
@@ -109,7 +114,10 @@ abstract class FireBaseStore implements DB {
         result.orderBy(order.orderBy, order.sortBy || "desc");
       });
     }
-    const { data, exists } = await this.DBDataParse(result, returnDBQuery);
+    const { data, exists } = await this.DBDataParse({
+      dataOfDbResult: result,
+      shouldIDo: returnDBQuery,
+    });
     if (exists) return data;
     throw new Error("no data");
   }
@@ -122,7 +130,7 @@ abstract class FireBaseStore implements DB {
    *
    * @param {WriteAData} // isimlendirilmis degisken alir
    */
-  async writeAData({ table, data, id }: WriteAData): Promise<boolean> {
+  async writeAData({ table, data, id }: WriteADataParams): Promise<boolean> {
     try {
       if (id)
         return (await this.db.collection(table).doc(id).set(data)) && true;
@@ -144,10 +152,13 @@ abstract class FireBaseStore implements DB {
    * @param {string} table
    * @param {string} id
    */
-  async delById(table: string, id: string): Promise<boolean | Error> {
+  async delById({ table, id }: DelByIdParams): Promise<boolean | Error> {
     try {
-      const result: any = await this.getById(table, id, false);
-      //as firestore.DocumentReference<firestore.DocumentData>;
+      const result: any = await this.getById({
+        table,
+        id,
+        returnDBQuery: false,
+      });
       const { data } = await this.DBDataParse(result);
       functions.logger.info("delById", { arguments: { table, id }, data });
       await result.delete();
@@ -168,18 +179,25 @@ abstract class FireBaseStore implements DB {
    * @param {string} table
    * @param {string} id
    */
-  async updateById(
-    table: string,
-    id: string,
-    data: any
-  ): Promise<Object | Error> {
+  async updateById({ table, id, data }: UpdateById): Promise<Object | Error> {
     try {
-      const result: any = await this.getById(table, id, false);
-      const { data: dataForLog } = await this.DBDataParse(result);
+      const result: any = await this.getById({
+        table,
+        id,
+        returnDBQuery: false,
+      });
+      const { data: dataForLog } = await this.DBDataParse({
+        dataOfDbResult: result,
+        shouldIDo: true,
+        isWidthId: true,
+      });
       functions.logger.info("updateById", { arguments, dataForLog });
-      const { data: parsedData } = await this.DBDataParse(
-        await result.update(data)
-      );
+      const updatedData = await result.update(data);
+      const { data: parsedData } = await this.DBDataParse({
+        dataOfDbResult: updatedData,
+        shouldIDo: true,
+        isWidthId: true,
+      });
       return parsedData[0];
     } catch (err) {
       functions.logger.error("updteById", {

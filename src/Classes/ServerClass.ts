@@ -44,7 +44,7 @@ export class ServerClass implements ServerI {
       return { status: true, data: await this.user.updateMe(data) };
     } catch (err) {
       logger.error("updateMe", {
-        err,
+        err: err.message,
         arguments: { data: data, context: context.auth },
       });
       return { statu: false };
@@ -60,7 +60,10 @@ export class ServerClass implements ServerI {
       await this.anon.addSatan(data);
       return { status: true };
     } catch (err) {
-      logger.error("addLandAgent", { err, arguments: { data, context } });
+      logger.error("addLandAgent", {
+        err: err.message,
+        arguments: { data, context },
+      });
       return { status: false };
     }
   }
@@ -97,7 +100,7 @@ export class ServerClass implements ServerI {
       return { status: isDeleted };
     } catch (err) {
       logger.error("delRoom", {
-        err,
+        err: err.message,
         arguments: { data: data, context: context.auth },
       });
       return { status: false };
@@ -119,7 +122,7 @@ export class ServerClass implements ServerI {
       return { status: true, updated };
     } catch (err) {
       logger.error("updateRoom", {
-        err,
+        err: err.message,
         arguments: { data: data, context: context.auth },
       });
       return { status: false };
@@ -159,7 +162,7 @@ export class ServerClass implements ServerI {
       return { status: true };
     } catch (err) {
       logger.error("addCard", {
-        err,
+        err: err.message,
         arguments: { data: data, context: context.auth },
       });
       return { status: false };
@@ -178,7 +181,7 @@ export class ServerClass implements ServerI {
       return { status: true };
     } catch (err) {
       logger.error("rank", {
-        err,
+        err: err.message,
         arguments: { data: data, context: context.auth },
       });
       return { status: false };

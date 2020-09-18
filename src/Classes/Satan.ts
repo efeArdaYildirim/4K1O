@@ -13,10 +13,6 @@ export class LandAgent extends UserClass {
     // this.uid = uid;
   }
 
-  public test() {
-    console.error("nbr");
-  }
-
   private roomDataValidator(room: Room): void {
     new Validator(room)
       .itIsshouldNotToBeThere(["rank", "look", "like", "dislike", "id"])
