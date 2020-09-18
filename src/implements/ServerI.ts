@@ -2,7 +2,7 @@ export interface ServerI {
   login(data: any, context: any): any;
   logup({ data, context }: any): any;
   roomList(data: any, context: any): any;
-  romSearch(data: any, context: any): any;
+  roomSearch(data: any, context: any): any;
   roomLook(data: any, context: any): any;
   addRoom(data: any, context: any): any;
   getMyRooms(data: any, context: any): any;

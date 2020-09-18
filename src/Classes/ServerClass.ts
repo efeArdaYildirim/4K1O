@@ -23,7 +23,7 @@ export class ServerClass implements ServerI {
   roomList(data: any, context: any) {
     throw new Error("Method not implemented.");
   }
-  romSearch(data: any, context: any) {
+  roomSearch(data: any, context: any) {
     throw new Error("Method not implemented.");
   }
   roomLook(data: any, context: any) {
