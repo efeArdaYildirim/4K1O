@@ -35,7 +35,10 @@ abstract class FireBaseStore implements DB {
       });
       return { data: out, exists: rows.exists };
     } catch (err) {
-      functions.logger.error("DBDataParse", { err, arguments });
+      functions.logger.error("DBDataParse", {
+        err: err.message,
+        arguments: { dataOfDbResult, shouldIDo },
+      });
       throw err;
     }
   }
@@ -107,7 +110,10 @@ abstract class FireBaseStore implements DB {
         return (await this.db.collection(table).doc(id).set(data)) && true;
       else return (await this.db.collection(table).add(data)) && true;
     } catch (err) {
-      functions.logger.error("writeAData", { err, arguments });
+      functions.logger.error("writeAData", {
+        err: err.message,
+        arguments: { table, data, id },
+      });
       return err;
     }
   }
@@ -125,11 +131,14 @@ abstract class FireBaseStore implements DB {
       const result: any = await this.getById(table, id, false);
       //as firestore.DocumentReference<firestore.DocumentData>;
       const { data } = await this.DBDataParse(result);
-      functions.logger.info("delById", { arguments, data });
+      functions.logger.info("delById", { arguments: { table, id }, data });
       await result.delete();
       return true;
     } catch (err) {
-      functions.logger.error("delById", { err, arguments });
+      functions.logger.error("delById", {
+        err: err.message,
+        arguments: { table, id },
+      });
       return err;
     }
   }
@@ -155,7 +164,10 @@ abstract class FireBaseStore implements DB {
       );
       return parsedData[0];
     } catch (err) {
-      functions.logger.error("updteById", { err, arguments });
+      functions.logger.error("updteById", {
+        err: err.message,
+        arguments: { table, id, data },
+      });
       throw err;
     }
   }

@@ -42,7 +42,7 @@ export class App {
         .catch((err) => err);
       return;
     } catch (err) {
-      functions.logger.error("ranking", { err, arguments });
+      functions.logger.error("ranking", { err, arguments: { roomId } });
       return;
     }
   }
@@ -57,7 +57,10 @@ export class App {
         });
       })
       .catch((err: any) => {
-        functions.logger.error("sendMailToReviver", { err, arguments });
+        functions.logger.error("sendMailToReviver", {
+          err,
+          arguments: { data },
+        });
       });
 
     return;

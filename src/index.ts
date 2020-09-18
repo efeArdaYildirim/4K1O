@@ -1,5 +1,5 @@
 import { functions } from "firebase";
-import { auth, firestore, initializeApp } from "firebase-admin";
+import { auth, firestore, initializeApp, credential } from "firebase-admin";
 import { https, logger } from "firebase-functions";
 import { defaultDatabase } from "firebase-functions/lib/providers/firestore";
 import { Anonim } from "./Classes/Anonim";
@@ -10,7 +10,11 @@ import { Validator } from "./Classes/Validator";
 import { ListRoomsQueryParams } from "./tipitipler/Extralar";
 import { Room } from "./tipitipler/Room";
 
-initializeApp();
+const serviceAccount = require("../key.json");
+
+initializeApp({
+  credential: credential.cert(serviceAccount),
+});
 
 const db = new DAL(firestore());
 const anon = new Anonim(db);
@@ -132,14 +136,19 @@ const cardJobs = async function (
   context: https.CallableContext
 ) {
   try {
-    logger.info("addCard", { arguments: { data: data, context: context.auth } });
+    logger.info("addCard", {
+      arguments: { data: data, context: context.auth },
+    });
     if (!context.auth) throw new Error("login olamdan carda veri yazma");
     user.setUid = context.auth.uid;
     if (data.add) await user.roomAddToCart(data.id);
     else await user.roomDelToCart(data.id);
     return { status: true };
   } catch (err) {
-    logger.error("addCard", { err, arguments: { data: data, context: context.auth } });
+    logger.error("addCard", {
+      err,
+      arguments: { data: data, context: context.auth },
+    });
     return { status: false };
   }
 };
@@ -155,7 +164,10 @@ const rank = async function (
     await user.rankRoom(data.id, data.rank);
     return { status: true };
   } catch (err) {
-    logger.error("rank", { err, arguments: { data: data, context: context.auth } });
+    logger.error("rank", {
+      err,
+      arguments: { data: data, context: context.auth },
+    });
     return { status: false };
   }
 };
