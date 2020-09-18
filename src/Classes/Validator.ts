@@ -52,12 +52,6 @@ export class Validator {
   isBoolean(obj: string) {
     const nowData = this.data[obj];
     if (typeof nowData !== "boolean") throw new Error("veri bool degil");
-    if (
-      typeof nowData !== "string" &&
-      (nowData.toString() === "true" || nowData.toString() === "false")
-    )
-      throw new Error("veri bool degil");
-
     return this;
   }
   itIsshouldNotToBeThere(objs: string[]) {
