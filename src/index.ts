@@ -11,23 +11,13 @@ initializeApp({
 const server = new ServerClass(firestore());
 
 export default {
-  login: https.onCall((data, context) => {
-    return { status: false };
-  }),
+  login: https.onCall(server.login),
   logup: https.onCall(server.logup),
-  roomList: https.onCall((data, context) => {
-    return { status: false };
-  }),
-  roomSearch: https.onCall((data, context) => {
-    return { status: false };
-  }),
-  roomLook: https.onCall((data, context) => {
-    return { status: false };
-  }),
+  roomList: https.onCall(server.roomList),
+  roomSearch: https.onCall(server.roomSearch),
+  roomLook: https.onCall(server.roomLook),
   aEaddRoom: https.onCall(server.addRoom),
-  aEgetMyRoom: https.onCall((data, context) => {
-    return { status: false };
-  }),
+  aEgetMyRoom: https.onCall(server.getMyRooms),
   aESdelRoom: https.onCall(server.delRoom),
   aEsupdateRoom: https.onCall(server.updateRoom),
   aUdeleteProfile: https.onCall(server.deleteMe),
