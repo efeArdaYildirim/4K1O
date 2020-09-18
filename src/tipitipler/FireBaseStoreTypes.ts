@@ -36,7 +36,7 @@ export type DBDataParseParams = {
 export type GetByIdParams = {
   table: string;
   id: string;
-  returnDBQuery: boolean;
+  returnDBQuery?: boolean;
 };
 
 export type DelByIdParams = {

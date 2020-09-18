@@ -21,7 +21,7 @@ class DAL extends FireBaseStore {
 
   //#region getUserById
   getUserById(id: string): Promise<User> {
-    return this.getById(this.tables.users, id) as Promise<User>;
+    return this.getById({ table: this.tables.users, id }) as Promise<User>;
   }
   //#endregion getUserById
 
@@ -33,13 +33,15 @@ class DAL extends FireBaseStore {
 
   //#region delUserById
   delUserById(id: string): Promise<boolean | Error> {
-    return this.delById(this.tables.users, id);
+    return this.delById({ table: this.tables.users, id });
   }
   //#endregion delUserById
 
   //#region updateUserById
   updateUserById(id: string, data: JSON): Promise<User> {
-    return this.updateById(this.tables.users, id, data) as Promise<User>;
+    return this.updateById({ table: this.tables.users, id, data }) as Promise<
+      User
+    >;
   }
   //#endregion updateUserById
 
@@ -60,16 +62,24 @@ class DAL extends FireBaseStore {
 
   //#region addRoomToCard
   addRoomToCard(userId: string, roomId: string): Promise<Room> {
-    return this.updateById(this.tables.users, userId, {
-      cards: admin.firestore.FieldValue.arrayUnion(roomId),
+    const data = { cards: admin.firestore.FieldValue.arrayUnion(roomId) };
+    return this.updateById({
+      table: this.tables.users,
+      id: userId,
+      data,
     }) as Promise<Room>;
   }
   //#endregion addRoomToCard
 
   //#region delRoomToCard
   delRoomToCard(userId: string, roomId: string): Promise<Room> {
-    return this.updateById(this.tables.users, userId, {
+    const data = {
       cards: admin.firestore.FieldValue.arrayRemove(roomId),
+    };
+    return this.updateById({
+      table: this.tables.users,
+      id: userId,
+      data,
     }) as Promise<Room>;
   }
   //#endregion delRoomToCard
@@ -80,7 +90,7 @@ class DAL extends FireBaseStore {
 
   //#region getRoomById
   getRoomById(id: string): Promise<Room> {
-    return this.getById(this.tables.rooms, id) as Promise<Room>;
+    return this.getById({ table: this.tables.rooms, id }) as Promise<Room>;
   }
   //#endregion getRoomById
 
@@ -92,29 +102,35 @@ class DAL extends FireBaseStore {
 
   //#region delRoomById
   delRoomById(id: string): Promise<boolean | Error> {
-    return this.delById(this.tables.rooms, id);
+    return this.delById({ table: this.tables.rooms, id });
   }
   //#endregion delRoomById
 
   //#region hideRoomById
   hideRoomById(id: string, hide: boolean): Promise<Room> {
-    return this.updateById(this.tables.rooms, id, { hide }) as Promise<Room>;
+    return this.updateById({
+      table: this.tables.rooms,
+      id,
+      data: { hide },
+    }) as Promise<Room>;
   }
   //#endregion hideRoomById
 
   //#region addLikeOrDislikeRoomById
   private dislike(id: string): Promise<Room> {
     const value = admin.firestore.FieldValue.increment(1);
-    return this.updateById(this.tables.rooms, id, {
-      dislike: value,
-    }) as Promise<Room>;
+    const data = { dislike: value };
+    return this.updateById({ table: this.tables.rooms, id, data }) as Promise<
+      Room
+    >;
   }
 
   private like(id: string): Promise<Room> {
     const value = admin.firestore.FieldValue.increment(1);
-    return this.updateById(this.tables.rooms, id, {
-      like: value,
-    }) as Promise<Room>;
+    const data = { like: value };
+    return this.updateById({ table: this.tables.rooms, id, data }) as Promise<
+      Room
+    >;
   }
 
   addLikeOrDislikeRoomById(id: string, like: boolean): Promise<Room> {
@@ -126,7 +142,9 @@ class DAL extends FireBaseStore {
   //#region upDateRoomById
 
   upDateRoomById(id: string, data: object): Promise<Room> {
-    return this.updateById(this.tables.rooms, id, data) as Promise<Room>;
+    return this.updateById({ table: this.tables.rooms, id, data }) as Promise<
+      Room
+    >;
   }
 
   //#endregion upDateRoomById
@@ -174,7 +192,10 @@ class DAL extends FireBaseStore {
   //#region updateRankById
 
   updateRankById(id: string, rank: string): Promise<Room> {
-    return this.updateById(this.tables.rooms, id, { rank }) as Promise<Room>;
+    const data = { rank };
+    return this.updateById({ table: this.tables.rooms, id, data }) as Promise<
+      Room
+    >;
   }
 
   //#endregion updateRankById
