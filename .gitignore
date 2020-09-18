@@ -13,5 +13,5 @@ key.json
 yarn.lock
 
 *.log*
-
+.idea/
 smtpConfig.json

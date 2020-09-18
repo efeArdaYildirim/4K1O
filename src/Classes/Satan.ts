@@ -33,7 +33,7 @@ export class LandAgent extends UserClass {
 
   addRoom(room: Room) {
     this.roomDataValidator(room);
-    return this.db.createRoom(room);
+    return this.db.createRoom({ ...room, owner: this.uid });
   }
 
   getMyRooms(): Promise<Rooms> {
