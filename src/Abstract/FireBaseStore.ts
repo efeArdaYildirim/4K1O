@@ -7,7 +7,7 @@ import {
   FilterFuncParams,
   GetByIdParams,
   IsWidthIdParams,
-  UpdateById,
+  UpdateByIdParams,
   WriteADataParams,
 } from "../tipitipler/FireBaseStoreTypes";
 import { DB } from "../implements/DB";
@@ -179,7 +179,11 @@ abstract class FireBaseStore implements DB {
    * @param {string} table
    * @param {string} id
    */
-  async updateById({ table, id, data }: UpdateById): Promise<Object | Error> {
+  async updateById({
+    table,
+    id,
+    data,
+  }: UpdateByIdParams): Promise<Object | Error> {
     try {
       const result: any = await this.getById({
         table,

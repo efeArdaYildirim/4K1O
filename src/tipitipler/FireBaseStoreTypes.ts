@@ -44,7 +44,7 @@ export type DelByIdParams = {
   id: string;
 };
 
-export type UpdateById = {
+export type UpdateByIdParams = {
   table: string;
   id: string;
   data: object;
