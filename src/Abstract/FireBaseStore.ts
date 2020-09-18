@@ -188,11 +188,10 @@ abstract class FireBaseStore implements DB {
       const result: any = await this.getById({
         table,
         id,
-        returnDBQuery: false,
+        returnDBQuery: true,
       });
       const { data: dataForLog } = await this.DBDataParse({
         dataOfDbResult: result,
-        shouldIDo: true,
         isWidthId: true,
       });
       functions.logger.info("updateById", { arguments, dataForLog });

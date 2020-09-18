@@ -29,7 +29,7 @@ export type IsWidthIdParams = {
 
 export type DBDataParseParams = {
   dataOfDbResult: FirebaseFirestore.DocumentData;
-  shouldIDo: boolean;
+  shouldIDo?: boolean;
   isWidthId?: boolean;
 };
 
