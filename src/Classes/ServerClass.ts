@@ -1,5 +1,5 @@
 import { https, logger } from "firebase-functions";
-import { Room } from '../tipitipler/Room';
+import { Room } from "../tipitipler/Room";
 import { Anonim } from "./Anonim";
 import { DAL } from "./DAL";
 import { LandAgent } from "./Satan";
@@ -68,5 +68,47 @@ export class ServerClass {
     }
   }
 
-  
+  async delRoom(data: string, context: https.CallableContext) {
+    try {
+      logger.info("delRoom", {
+        arguments: { data: data, context: context.auth },
+      });
+      this.satan.setUid = context.auth!.uid;
+      let isDeleted: boolean;
+      if (!this.satan.amILandAgent())
+        throw new Error("basksinin odasini silemesin");
+      else isDeleted = (await this.satan.delMyRoom(data)) as boolean;
+      return { status: isDeleted };
+    } catch (err) {
+      logger.error("delRoom", {
+        err,
+        arguments: { data: data, context: context.auth },
+      });
+      return { status: false };
+    }
+  }
+
+  async updateRoom(
+    data: { room: Room; id: string },
+    context: https.CallableContext
+  ) {
+    try {
+      logger.info("updateRoom", {
+        arguments: { data: data, context: context.auth },
+      });
+      this.satan.setUid = context.auth!.uid;
+      if (!this.satan.amILandAgent())
+        throw new Error("basksinin odasini gunceleyemesi");
+      const updated = await this.satan.updateMyRoom(data.id, data.room);
+      return { status: true, updated };
+    } catch (err) {
+      logger.error("updateRoom", {
+        err,
+        arguments: { data: data, context: context.auth },
+      });
+      return { status: false };
+    }
+  }
+
+
 }
