@@ -158,8 +158,9 @@ class DAL extends FireBaseStore {
     limit,
     city,
   }: ListRoomsQueryParams) {
-    if (city)
+    if (city) {
       queryArr.push({ collOfTable: "city", query: "==", mustBeData: city });
+    }
     const sortArray: SortQuery[] = [
       { orderBy: "rank", sortBy: "desc" },
       ...sort,

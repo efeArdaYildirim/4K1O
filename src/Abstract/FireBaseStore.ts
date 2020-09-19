@@ -7,6 +7,7 @@ import {
   FilterFuncParams,
   GetByIdParams,
   IsWidthIdParams,
+  SortQuery,
   UpdateByIdParams,
   WriteADataParams,
 } from "../tipitipler/FireBaseStoreTypes";
@@ -90,6 +91,15 @@ abstract class FireBaseStore implements DB {
   //#endregion getById
 
   //#region filter
+  private resultLimit(result: any, index: number, limit: number) {
+    result.startAt(index * limit);
+    result.limit(limit);
+  }
+  private resultSort(sort: SortQuery[], result: any) {
+    sort.forEach((order) => {
+      result.orderBy(order.orderBy, order.sortBy || "desc");
+    });
+  }
   /**
    * komplex queriler kurmani saglar
    * @param {string} table
@@ -102,20 +112,15 @@ abstract class FireBaseStore implements DB {
     limit,
     index = 0,
     sort,
-  }: FilterFuncParams): Promise<Object[]> {
+  }: FilterFuncParams): Promise<object[]> {
     const result = this.db.collection(table);
     queryArr.forEach((query) =>
       result.where(query.collOfTable, query.query, query.mustBeData)
     );
-    if (limit) {
-      result.startAt(index * limit);
-      result.limit(limit);
-    }
-    if (sort) {
-      sort.forEach((order) => {
-        result.orderBy(order.orderBy, order.sortBy || "desc");
-      });
-    }
+    if (limit) this.resultLimit(result, index, limit);
+
+    if (sort) this.resultSort(sort, result);
+
     const { data, exists } = await this.DBDataParse({
       dataOfDbResult: result,
       shouldIDo: returnDBQuery,
@@ -134,15 +139,15 @@ abstract class FireBaseStore implements DB {
    */
   async writeAData({ table, data, id }: WriteADataParams): Promise<boolean> {
     try {
-      if (id)
-        return (await this.db.collection(table).doc(id).set(data)) && true;
-      else return (await this.db.collection(table).add(data)) && true;
+      if (id) await this.db.collection(table).doc(id).set(data);
+      else await this.db.collection(table).add(data);
+      return true;
     } catch (err) {
       functions.logger.error("writeAData", {
         err: err.message,
         arguments: { table, data, id },
       });
-      return err;
+      return false;
     }
   }
 

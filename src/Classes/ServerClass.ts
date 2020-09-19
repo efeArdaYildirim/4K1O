@@ -38,9 +38,8 @@ export class ServerClass implements ServerI {
       logger.info("updateMe", {
         arguments: { data: data, context: context.auth },
       });
-      if (!context.auth)
-        throw new Error("login olmada kullanici update etmeye calisma islemi");
       this.user.setUid = context.auth.uid;
+      this.user.amIauth();
       return { status: true, data: await this.user.updateMe(data) };
     } catch (err) {
       logger.error("updateMe", {
@@ -56,7 +55,8 @@ export class ServerClass implements ServerI {
       logger.info("addLandAgent", {
         arguments: { data: data, context: context.auth },
       });
-      if (context.auth) throw new Error("loginken hesap olusturamasin");
+      this.user.setUid = context.auth.uid;
+      this.user.amIauth();
       await this.anon.addSatan(data);
       return { status: true };
     } catch (err) {
@@ -74,8 +74,7 @@ export class ServerClass implements ServerI {
         arguments: { data: data, context: context.auth },
       });
       this.satan.setUid = context.auth!.uid;
-      if (!this.satan.amILandAgent())
-        throw new Error("satici olmadan oda ekelyemesin");
+      await this.satan.amILandAgent();
       const isAdded = await this.satan.addRoom(data);
       return { status: isAdded };
     } catch (err) {
@@ -93,10 +92,8 @@ export class ServerClass implements ServerI {
         arguments: { data: data, context: context.auth },
       });
       this.satan.setUid = context.auth!.uid;
-      let isDeleted: boolean;
-      if (!this.satan.amILandAgent())
-        throw new Error("basksinin odasini silemesin");
-      else isDeleted = (await this.satan.delMyRoom(data)) as boolean;
+      await this.satan.amILandAgent();
+      const isDeleted = (await this.satan.delMyRoom(data)) as boolean;
       return { status: isDeleted };
     } catch (err) {
       logger.error("delRoom", {
@@ -116,8 +113,7 @@ export class ServerClass implements ServerI {
         arguments: { data: data, context: context.auth },
       });
       this.satan.setUid = context.auth!.uid;
-      if (!this.satan.amILandAgent())
-        throw new Error("basksinin odasini gunceleyemesi");
+      await this.satan.amILandAgent();
       const updated = await this.satan.updateMyRoom(data.id, data.room);
       return { status: true, updated };
     } catch (err) {
@@ -134,9 +130,8 @@ export class ServerClass implements ServerI {
       logger.info("deleteMe", {
         arguments: { data: _data, context: context.auth },
       });
-      if (!context.auth)
-        throw new Error("baska kullanici silmeye calisma islemi");
-      this.user.setUid = context.auth.uid;
+      this.user.setUid = context.auth!.uid;
+      this.user.amIauth();
       return { status: true, data: await this.user.delMe() };
     } catch (err) {
       logger.error("deleteMe", {
@@ -155,8 +150,8 @@ export class ServerClass implements ServerI {
       logger.info("addCard", {
         arguments: { data: data, context: context.auth },
       });
-      if (!context.auth) throw new Error("login olamdan carda veri yazma");
-      this.user.setUid = context.auth.uid;
+      this.user.setUid = context.auth!.uid;
+      this.user.amIauth();
       if (data.add) await this.user.roomAddToCart(data.id);
       else await this.user.roomDelToCart(data.id);
       return { status: true };
@@ -175,8 +170,8 @@ export class ServerClass implements ServerI {
   ) {
     try {
       logger.info("rank", { arguments: { data: data, context: context.auth } });
-      if (!context.auth) throw new Error("login olamdan rank verme");
-      this.user.setUid = context.auth.uid;
+      this.user.setUid = context.auth!.uid;
+      this.user.amIauth();
       await this.user.rankRoom(data.id, data.rank);
       return { status: true };
     } catch (err) {

@@ -40,17 +40,22 @@ export class AnonimFirebase {
   async addSatan(user: User): Promise<boolean> {
     this.validateBaisicUserData(user);
 
-    if (user.landAgent) this.app.turkisIdCheck(user.landAgent);
-    else throw new Error("eksik veri");
+    if (!user.landAgent) throw new Error("eksik veri");
+    this.app.turkisIdCheck(user.landAgent);
 
     const createdUser: admin.auth.UserRecord = await admin.auth().createUser({
       email: user.email,
-      //phoneNumber: user.landAgent.phoneNumber,
+      phoneNumber: user.landAgent.phoneNumber,
       password: user.password,
       displayName: user.name,
       disabled: true,
     });
 
+    const isCreated = this.db.creatUser({ data: user, id: createdUser.uid });
+
+    if (isCreated) return isCreated;
+    await admin.auth().deleteUser(createdUser.uid);
+    return false;
     /* // bu kod fire base de calismiyacak
     this.app.sendMailToReciver({
       to: user.email,
@@ -59,6 +64,5 @@ export class AnonimFirebase {
       html: "",
     });
     */
-    return this.db.creatUser({ data: user, id: createdUser.uid });
   }
 }

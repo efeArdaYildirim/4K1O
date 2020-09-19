@@ -18,6 +18,16 @@ export class UserClass {
     this.uid = v;
   }
   //#region private
+
+  amIauth() {
+    if (this.uid) throw new Error("login degilsin");
+    this.getMe()
+      .then((me) => me)
+      .catch((me) => {
+        throw me;
+      });
+  }
+
   private userDartaValidte(data: User) {
     new Validator(data)
       .itIsshouldToBeThere([

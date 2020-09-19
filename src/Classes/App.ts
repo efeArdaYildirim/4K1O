@@ -32,10 +32,14 @@ export class App {
     return;
   }
 
+  private rankalgorithm({ like, dislike }: any): number {
+    return like - dislike;
+  }
+
   async rankCalcByLikefromRoom(roomId: string): Promise<void> {
     try {
       const { like, dislike } = await this.db.getRoomById(roomId);
-      const rank: number = like - dislike;
+      const rank: number = this.rankalgorithm({ like, dislike });
       this.db
         .upDateRoomById(roomId, { rank })
         .then((result) => result)
@@ -52,13 +56,13 @@ export class App {
       .sendMail({ ...data, from: "info@4k1o.com" })
       .then((info: any) => {
         functions.logger.info("sendMailToReviver", {
-          arguments,
+          arguments: { data, info },
           mailUrl: getTestMessageUrl(info),
         });
       })
       .catch((err: any) => {
         functions.logger.error("sendMailToReviver", {
-          err,
+          err: err.message,
           arguments: { data },
         });
       });

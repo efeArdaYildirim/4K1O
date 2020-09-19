@@ -27,6 +27,11 @@ export class LandAgent extends UserClass {
     if (room.location) new Validator(room.location).isItUrl("mapsLink");
   }
 
+  private isItMyRoom(room: Room): void {
+    const roomOwner = room.owner;
+    if (roomOwner !== this.uid) throw new Error("basksinin odasini silemesin");
+  }
+
   addRoom(room: Room) {
     this.roomDataValidator(room);
     return this.db.createRoom({ ...room, owner: this.uid });
@@ -40,10 +45,8 @@ export class LandAgent extends UserClass {
     return this.db
       .getRoomById(roomId)
       .then((room: Room) => {
-        const roomOwner = room.owner;
-        if (roomOwner !== this.uid)
-          throw new Error("basksinin odasini silemesin");
-        else return this.db.delRoomById(roomId);
+        this.isItMyRoom(room);
+        return this.db.delRoomById(roomId);
       })
       .catch((err) => {
         throw err;
@@ -53,12 +56,15 @@ export class LandAgent extends UserClass {
   updateMyRoom(roomId: string, updateRoomData: Room): Promise<Room> {
     this.roomDataValidator(updateRoomData);
     new Validator(updateRoomData).itIsshouldNotToBeThere(["owner"]);
-    return this.db.upDateRoomById(roomId, updateRoomData);
+    return this.db.getRoomById(roomId).then((room: Room) => {
+      this.isItMyRoom(room);
+      return this.db.upDateRoomById(roomId, updateRoomData);
+    });
   }
 
-  amILandAgent(): Promise<boolean> {
+  amILandAgent(): Promise<void> {
     return this.getMe().then((me: User) => {
-      return me.isLandAgent;
+      if (me.isLandAgent) throw new Error("satici degilsin");
     });
   }
 }
