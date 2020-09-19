@@ -11,6 +11,7 @@ import {
   WriteADataParams,
 } from "../tipitipler/FireBaseStoreTypes";
 import { DB } from "../implements/DB";
+const FieldValue = firestore.FieldValue;
 
 abstract class FireBaseStore implements DB {
   db!: FirebaseFirestore.Firestore;
@@ -72,16 +73,17 @@ abstract class FireBaseStore implements DB {
   async getById({
     table,
     id,
-    returnDBQuery = true,
+    returnDBQuery = false,
   }: GetByIdParams): Promise<
     JSON | Error | firestore.DocumentReference<firestore.DocumentData>
   > {
     const result = this.db.collection(table).doc(id);
     const { data, exists } = await this.DBDataParse({
       dataOfDbResult: result,
-      shouldIDo: returnDBQuery,
+      shouldIDo: !returnDBQuery,
       isWidthId: true,
     });
+    if (returnDBQuery) return data;
     if (exists) return data[0];
     throw new Error("no data");
   }
@@ -154,11 +156,7 @@ abstract class FireBaseStore implements DB {
    */
   async delById({ table, id }: DelByIdParams): Promise<boolean | Error> {
     try {
-      const result: any = await this.getById({
-        table,
-        id,
-        returnDBQuery: false,
-      });
+      const result: any = await this.getById({ table, id });
       const { data } = await this.DBDataParse(result);
       functions.logger.info("delById", { arguments: { table, id }, data });
       await result.delete();
@@ -194,14 +192,12 @@ abstract class FireBaseStore implements DB {
         dataOfDbResult: result,
         isWidthId: true,
       });
-      functions.logger.info("updateById", { arguments, dataForLog });
-      const updatedData = await result.update(data);
-      const { data: parsedData } = await this.DBDataParse({
-        dataOfDbResult: updatedData,
-        shouldIDo: true,
-        isWidthId: true,
+      functions.logger.info("updateById", { dataForLog });
+      const updatedData = await result.update({
+        ...data,
+        timestamp: FieldValue.serverTimestamp(),
       });
-      return parsedData[0];
+      return updatedData;
     } catch (err) {
       functions.logger.error("updteById", {
         err: err.message,
