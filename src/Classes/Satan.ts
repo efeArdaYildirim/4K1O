@@ -13,18 +13,18 @@ export class LandAgent extends UserClass {
     // this.uid = uid;
   }
 
-  private roomDataValidator(room: Room): void {
+  private RoomDataValidator(room: Room): void {
     new Validator(room)
-      .itIsshouldNotToBeThere(["rank", "look", "like", "dislike", "id"])
-      .isNumber("m2")
-      .maxLength("title", 64)
-      .minLength("title", 3)
-      .minLength("explain", 10)
-      .maxLength("explain", 500)
-      .minWordCount("explain", 5)
-      .isBoolean("isActive")
-      .isNumber("price");
-    if (room.location) new Validator(room.location).isItUrl("mapsLink");
+      .ItIsshouldNotToBeThere(["rank", "look", "like", "dislike", "id"])
+      .IsNumber("m2")
+      .MaxLength("title", 64)
+      .MinLength("title", 3)
+      .MinLength("explain", 10)
+      .MaxLength("explain", 500)
+      .MinWordCount("explain", 5)
+      .IsBoolean("isActive")
+      .IsNumber("price");
+    if (room.location) new Validator(room.location).IsItUrl("mapsLink");
   }
 
   private isItMyRoom(room: Room): void {
@@ -32,38 +32,38 @@ export class LandAgent extends UserClass {
     if (roomOwner !== this.uid) throw new Error("sesnin odan degil");
   }
 
-  addRoom(room: Room) {
-    this.roomDataValidator(room);
-    return this.db.createRoom({ ...room, owner: this.uid });
+  AddRoom(room: Room) {
+    this.RoomDataValidator(room);
+    return this.db.CreateRoom({ ...room, owner: this.uid });
   }
 
-  getMyRooms(): Promise<Rooms> {
-    return this.db.getMyRooms(this.uid);
+  GetMyRooms(): Promise<Rooms> {
+    return this.db.GetMyRooms(this.uid);
   }
 
-  delMyRoom(roomId: string): Promise<boolean | Error> {
+  DelMyRoom(roomId: string): Promise<boolean | Error> {
     return this.db
-      .getRoomById(roomId)
+      .GetRoomById(roomId)
       .then((room: Room) => {
         this.isItMyRoom(room);
-        return this.db.delRoomById(roomId);
+        return this.db.DelRoomById(roomId);
       })
       .catch((err) => {
         throw err;
       });
   }
 
-  updateMyRoom(roomId: string, updateRoomData: Room): Promise<Room> {
-    this.roomDataValidator(updateRoomData);
-    new Validator(updateRoomData).itIsshouldNotToBeThere(["owner"]);
-    return this.db.getRoomById(roomId).then((room: Room) => {
+  UpdateMyRoom(roomId: string, updateRoomData: Room): Promise<Room> {
+    this.RoomDataValidator(updateRoomData);
+    new Validator(updateRoomData).ItIsshouldNotToBeThere(["owner"]);
+    return this.db.GetRoomById(roomId).then((room: Room) => {
       this.isItMyRoom(room);
-      return this.db.upDateRoomById(roomId, updateRoomData);
+      return this.db.UpDateRoomById(roomId, updateRoomData);
     });
   }
 
-  amILandAgent(): Promise<void> {
-    return this.getMe().then((me: User) => {
+  AmILandAgent(): Promise<void> {
+    return this.GetMe().then((me: User) => {
       if (me.isLandAgent) throw new Error("satici degilsin");
     });
   }

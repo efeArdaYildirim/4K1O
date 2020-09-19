@@ -11,26 +11,26 @@ initializeApp({
 const server = new ServerClass(firestore());
 
 export default {
-  login: https.onCall((data, context) => server.login(data, context)),
-  logup: https.onCall((data, context) => server.logup({ data, context })),
-  roomList: https.onCall((data, context) => server.roomList(data, context)),
-  roomSearch: https.onCall((data, context) => server.roomSearch(data, context)),
-  roomLook: https.onCall((data, context) => server.roomLook(data, context)),
-  aEaddRoom: https.onCall((data, context) => server.addRoom(data, context)),
+  login: https.onCall((data, context) => server.Login(data, context)),
+  logup: https.onCall((data, context) => server.Logup({ data, context })),
+  roomList: https.onCall((data, context) => server.RoomList(data, context)),
+  roomSearch: https.onCall((data, context) => server.RoomSearch(data, context)),
+  roomLook: https.onCall((data, context) => server.RoomLook(data, context)),
+  aEaddRoom: https.onCall((data, context) => server.AddRoom(data, context)),
   aEgetMyRoom: https.onCall((data, context) =>
-    server.getMyRooms(data, context)
+    server.GetMyRooms(data, context)
   ),
-  aESdelRoom: https.onCall((data, context) => server.delRoom(data, context)),
+  aESdelRoom: https.onCall((data, context) => server.DelRoom(data, context)),
   aEsupdateRoom: https.onCall((data, context) =>
-    server.updateRoom(data, context)
+    server.UpdateRoom(data, context)
   ),
   aUdeleteProfile: https.onCall((data, context) =>
-    server.deleteMe(data, context)
+    server.DeleteMe(data, context)
   ),
   aUupdateProfile: https.onCall((data, context) =>
-    server.updateMe(data, context)
+    server.UpdateMe(data, context)
   ),
-  aUaddCard: https.onCall((data, context) => server.cardJobs(data, context)),
-  aUrank: https.onCall((data, context) => server.rank(data, context)),
-  aUdelCard: https.onCall((data, context) => server.cardJobs(data, context)),
+  aUaddCard: https.onCall((data, context) => server.CardJobs(data, context)),
+  aUrank: https.onCall((data, context) => server.Rank(data, context)),
+  aUdelCard: https.onCall((data, context) => server.CardJobs(data, context)),
 };

@@ -11,9 +11,9 @@ export class AnonimFirebase {
     this.app = new App(dal);
   }
 
-  private validateBaisicUserData(data: User): void {
+  private ValidateBaisicUserData(data: User): void {
     new Validator(data)
-      .itIsshouldToBeThere([
+      .ItIsshouldToBeThere([
         "landAgent",
         "isLandAgent",
         "name",
@@ -21,15 +21,15 @@ export class AnonimFirebase {
         "password",
         "yearOfBirdth",
       ])
-      .maxLength("name", 64)
-      .minLength("name", 2)
-      .maxWordCoud("name", 4)
-      .isEmail("email")
-      .minLength("password", 8)
-      .maxLength("password", 64)
-      .isBoolean("isLandAgent")
-      .isNumber("yearOfBirdth");
-    new Validator(data.landAgent).itIsshouldToBeThere([
+      .MaxLength("name", 64)
+      .MinLength("name", 2)
+      .MaxWordCoud("name", 4)
+      .IsEmail("email")
+      .MinLength("password", 8)
+      .MaxLength("password", 64)
+      .IsBoolean("isLandAgent")
+      .IsNumber("yearOfBirdth");
+    new Validator(data.landAgent).ItIsshouldToBeThere([
       "turkisIdNumber",
       "firstName",
       "lastName",
@@ -37,11 +37,11 @@ export class AnonimFirebase {
     ]);
   }
 
-  async addSatan(user: User): Promise<boolean> {
-    this.validateBaisicUserData(user);
+  async AddSatan(user: User): Promise<boolean> {
+    this.ValidateBaisicUserData(user);
 
     if (!user.landAgent) throw new Error("eksik veri");
-    this.app.turkisIdCheck(user.landAgent);
+    this.app.TurkisIdCheck(user.landAgent);
 
     const createdUser: admin.auth.UserRecord = await admin.auth().createUser({
       email: user.email,
@@ -51,7 +51,7 @@ export class AnonimFirebase {
       disabled: true,
     });
 
-    const isCreated = this.db.creatUser({ data: user, id: createdUser.uid });
+    const isCreated = this.db.CreatUser({ data: user, id: createdUser.uid });
 
     if (isCreated) return isCreated;
     await admin.auth().deleteUser(createdUser.uid);

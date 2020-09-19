@@ -20,26 +20,26 @@ class DAL extends FireBaseStore {
   //#region userFuncions
 
   //#region getUserById
-  getUserById(id: string): Promise<User> {
-    return this.getById({ table: this.tables.users, id }) as Promise<User>;
+  GetUserById(id: string): Promise<User> {
+    return this.GetById({ table: this.tables.users, id }) as Promise<User>;
   }
   //#endregion getUserById
 
   //#region createUser
-  creatUser({ data, id }: any): Promise<boolean> {
-    return this.writeAData({ table: this.tables.users, data, id });
+  CreatUser({ data, id }: any): Promise<boolean> {
+    return this.WriteAData({ table: this.tables.users, data, id });
   }
   //#endregion createUser
 
   //#region delUserById
-  delUserById(id: string): Promise<boolean | Error> {
-    return this.delById({ table: this.tables.users, id });
+  DelUserById(id: string): Promise<boolean | Error> {
+    return this.DelById({ table: this.tables.users, id });
   }
   //#endregion delUserById
 
   //#region updateUserById
-  updateUserById(id: string, data: JSON): Promise<User> {
-    return this.updateById({ table: this.tables.users, id, data }) as Promise<
+  UpdateUserById(id: string, data: JSON): Promise<User> {
+    return this.UpdateById({ table: this.tables.users, id, data }) as Promise<
       User
     >;
   }
@@ -47,12 +47,12 @@ class DAL extends FireBaseStore {
 
   //#region searchUserByNameAndPasswd
 
-  searchUserByEmailAndPasswd(email: string, passwd: string): Promise<User> {
+  SearchUserByEmailAndPasswd(email: string, passwd: string): Promise<User> {
     const queryArr: QueryStringObj[] = [
       { collOfTable: "email", query: "==", mustBeData: email },
       { collOfTable: "passwd", query: "==", mustBeData: passwd },
     ];
-    return this.filter({
+    return this.Filter({
       table: this.tables.users,
       queryArr,
     }).then((res: any[]) => res[0] as User);
@@ -61,9 +61,9 @@ class DAL extends FireBaseStore {
   //#endregion searchUserByNameAndPasswd
 
   //#region addRoomToCard
-  addRoomToCard(userId: string, roomId: string): Promise<Room> {
+  AddRoomToCard(userId: string, roomId: string): Promise<Room> {
     const data = { cards: admin.firestore.FieldValue.arrayUnion(roomId) };
-    return this.updateById({
+    return this.UpdateById({
       table: this.tables.users,
       id: userId,
       data,
@@ -72,11 +72,11 @@ class DAL extends FireBaseStore {
   //#endregion addRoomToCard
 
   //#region delRoomToCard
-  delRoomToCard(userId: string, roomId: string): Promise<Room> {
+  DelRoomToCard(userId: string, roomId: string): Promise<Room> {
     const data = {
       cards: admin.firestore.FieldValue.arrayRemove(roomId),
     };
-    return this.updateById({
+    return this.UpdateById({
       table: this.tables.users,
       id: userId,
       data,
@@ -89,26 +89,26 @@ class DAL extends FireBaseStore {
   //#region RoomFunctions
 
   //#region getRoomById
-  getRoomById(id: string): Promise<Room> {
-    return this.getById({ table: this.tables.rooms, id }) as Promise<Room>;
+  GetRoomById(id: string): Promise<Room> {
+    return this.GetById({ table: this.tables.rooms, id }) as Promise<Room>;
   }
   //#endregion getRoomById
 
   //#region createRoom
-  createRoom(data: Room): Promise<boolean> {
-    return this.writeAData({ table: this.tables.rooms, data });
+  CreateRoom(data: Room): Promise<boolean> {
+    return this.WriteAData({ table: this.tables.rooms, data });
   }
   //#endregion createRoom
 
   //#region delRoomById
-  delRoomById(id: string): Promise<boolean | Error> {
-    return this.delById({ table: this.tables.rooms, id });
+  DelRoomById(id: string): Promise<boolean | Error> {
+    return this.DelById({ table: this.tables.rooms, id });
   }
   //#endregion delRoomById
 
   //#region hideRoomById
-  hideRoomById(id: string, hide: boolean): Promise<Room> {
-    return this.updateById({
+  HideRoomById(id: string, hide: boolean): Promise<Room> {
+    return this.UpdateById({
       table: this.tables.rooms,
       id,
       data: { hide },
@@ -117,32 +117,32 @@ class DAL extends FireBaseStore {
   //#endregion hideRoomById
 
   //#region addLikeOrDislikeRoomById
-  private dislike(id: string): Promise<Room> {
+  private Dislike(id: string): Promise<Room> {
     const value = admin.firestore.FieldValue.increment(1);
     const data = { dislike: value };
-    return this.updateById({ table: this.tables.rooms, id, data }) as Promise<
+    return this.UpdateById({ table: this.tables.rooms, id, data }) as Promise<
       Room
     >;
   }
 
-  private like(id: string): Promise<Room> {
+  private Like(id: string): Promise<Room> {
     const value = admin.firestore.FieldValue.increment(1);
     const data = { like: value };
-    return this.updateById({ table: this.tables.rooms, id, data }) as Promise<
+    return this.UpdateById({ table: this.tables.rooms, id, data }) as Promise<
       Room
     >;
   }
 
-  addLikeOrDislikeRoomById(id: string, like: boolean): Promise<Room> {
-    if (like) return this.like(id);
-    return this.dislike(id);
+  AddLikeOrDislikeRoomById(id: string, like: boolean): Promise<Room> {
+    if (like) return this.Like(id);
+    return this.Dislike(id);
   }
   //#endregion addLikeOrDislikeRoomById
 
   //#region upDateRoomById
 
-  upDateRoomById(id: string, data: object): Promise<Room> {
-    return this.updateById({ table: this.tables.rooms, id, data }) as Promise<
+  UpDateRoomById(id: string, data: object): Promise<Room> {
+    return this.UpdateById({ table: this.tables.rooms, id, data }) as Promise<
       Room
     >;
   }
@@ -151,7 +151,7 @@ class DAL extends FireBaseStore {
 
   //#region listRoomByRankORCity
 
-  listRoomByRankORCity({
+  ListRoomByRankORCity({
     queryArr,
     index,
     sort,
@@ -165,7 +165,7 @@ class DAL extends FireBaseStore {
       { orderBy: "rank", sortBy: "desc" },
       ...sort,
     ];
-    return this.filter({
+    return this.Filter({
       table: this.tables.rooms,
       queryArr,
       limit,
@@ -178,11 +178,11 @@ class DAL extends FireBaseStore {
 
   //#region getMyRooms
 
-  getMyRooms(id: string): Promise<Rooms> {
+  GetMyRooms(id: string): Promise<Rooms> {
     const query: QueryStringObj[] = [
       { collOfTable: "owner", query: "==", mustBeData: id },
     ];
-    return this.filter({
+    return this.Filter({
       table: this.tables.rooms,
       queryArr: query,
     }) as Promise<Rooms>;
@@ -192,9 +192,9 @@ class DAL extends FireBaseStore {
 
   //#region updateRankById
 
-  updateRankById(id: string, rank: string): Promise<Room> {
+  UpdateRankById(id: string, rank: string): Promise<Room> {
     const data = { rank };
-    return this.updateById({ table: this.tables.rooms, id, data }) as Promise<
+    return this.UpdateById({ table: this.tables.rooms, id, data }) as Promise<
       Room
     >;
   }

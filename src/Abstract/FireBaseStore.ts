@@ -22,7 +22,7 @@ abstract class FireBaseStore implements DB {
 
   //#region DBDataParse
 
-  private isWidthId({ rows, isWidthId = false }: IsWidthIdParams): object[] {
+  private IsWidthId({ rows, isWidthId = false }: IsWidthIdParams): object[] {
     const out = [];
     if (isWidthId) out.push(rows.data());
     else {
@@ -32,7 +32,7 @@ abstract class FireBaseStore implements DB {
     }
     return out;
   }
-  private isExists(exists: boolean): void {
+  private IsExists(exists: boolean): void {
     if (!exists) throw new Error("veri yok");
   }
 
@@ -52,8 +52,8 @@ abstract class FireBaseStore implements DB {
     try {
       if (!shouldIDo) return { data: dataOfDbResult, exists: true };
       const rows = await dataOfDbResult.get();
-      this.isExists(rows.exists);
-      const out = this.isWidthId({ rows, isWidthId });
+      this.IsExists(rows.exists);
+      const out = this.IsWidthId({ rows, isWidthId });
       return { data: out, exists: rows.exists };
     } catch (err) {
       functions.logger.error("DBDataParse", {
@@ -71,7 +71,7 @@ abstract class FireBaseStore implements DB {
    * @param {string} table
    * @param {string} id
    */
-  async getById({
+  async GetById({
     table,
     id,
     returnDBQuery = false,
@@ -91,11 +91,11 @@ abstract class FireBaseStore implements DB {
   //#endregion getById
 
   //#region filter
-  private resultLimit(result: any, index: number, limit: number) {
+  private ResultLimit(result: any, index: number, limit: number) {
     result.startAt(index * limit);
     result.limit(limit);
   }
-  private resultSort(sort: SortQuery[], result: any) {
+  private ResultSort(sort: SortQuery[], result: any) {
     sort.forEach((order) => {
       result.orderBy(order.orderBy, order.sortBy || "desc");
     });
@@ -105,7 +105,7 @@ abstract class FireBaseStore implements DB {
    * @param {string} table
    * @param {QueryStringObj[]} queryArr
    */
-  async filter({
+  async Filter({
     table,
     queryArr,
     returnDBQuery = false,
@@ -117,9 +117,9 @@ abstract class FireBaseStore implements DB {
     queryArr.forEach((query) =>
       result.where(query.collOfTable, query.query, query.mustBeData)
     );
-    if (limit) this.resultLimit(result, index, limit);
+    if (limit) this.ResultLimit(result, index, limit);
 
-    if (sort) this.resultSort(sort, result);
+    if (sort) this.ResultSort(sort, result);
 
     const { data, exists } = await this.DBDataParse({
       dataOfDbResult: result,
@@ -137,7 +137,7 @@ abstract class FireBaseStore implements DB {
    *
    * @param {WriteAData} // isimlendirilmis degisken alir
    */
-  async writeAData({ table, data, id }: WriteADataParams): Promise<boolean> {
+  async WriteAData({ table, data, id }: WriteADataParams): Promise<boolean> {
     try {
       if (id) await this.db.collection(table).doc(id).set(data);
       else await this.db.collection(table).add(data);
@@ -159,9 +159,9 @@ abstract class FireBaseStore implements DB {
    * @param {string} table
    * @param {string} id
    */
-  async delById({ table, id }: DelByIdParams): Promise<boolean | Error> {
+  async DelById({ table, id }: DelByIdParams): Promise<boolean | Error> {
     try {
-      const result: any = await this.getById({ table, id });
+      const result: any = await this.GetById({ table, id });
       const { data } = await this.DBDataParse(result);
       functions.logger.info("delById", { arguments: { table, id }, data });
       await result.delete();
@@ -182,13 +182,13 @@ abstract class FireBaseStore implements DB {
    * @param {string} table
    * @param {string} id
    */
-  async updateById({
+  async UpdateById({
     table,
     id,
     data,
   }: UpdateByIdParams): Promise<Object | Error> {
     try {
-      const result: any = await this.getById({
+      const result: any = await this.GetById({
         table,
         id,
         returnDBQuery: true,

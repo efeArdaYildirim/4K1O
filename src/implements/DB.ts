@@ -15,16 +15,16 @@ interface DB {
     shouldIDo: boolean
   ): Promise<DBDataParseReturnType>;*/
 
-  filter({
+  Filter({
     table,
     queryArr,
     returnDBQuery,
   }: FilterFuncParams): Promise<Object[]>;
-  writeAData({ table, data, id }: WriteADataParams): Promise<Boolean>;
-  delById({ table, id }: DelByIdParams): Promise<boolean | Error>;
-  updateById({ table, id, data }: UpdateByIdParams): Promise<Object | Error>;
+  WriteAData({ table, data, id }: WriteADataParams): Promise<Boolean>;
+  DelById({ table, id }: DelByIdParams): Promise<boolean | Error>;
+  UpdateById({ table, id, data }: UpdateByIdParams): Promise<Object | Error>;
 
-  getById({
+  GetById({
     table,
     id,
     returnDBQuery,

@@ -13,54 +13,54 @@ export class Anonim extends AnonimFirebase {
     this.db = dal;
   }
 
-  private roomSearchQueryValidator(queryArr: QueryStringObj[]) {
+  private RoomSearchQueryValidator(queryArr: QueryStringObj[]) {
     new Validator(queryArr)
-      .itIsshouldToBeThere(["collOfTable", "query", "mustBeData"])
-      .maxLength("collOfTable", 64)
-      .minLength("collOfTable", 2)
-      .maxLength("query", 2)
-      .minLength("query", 1)
-      .minLength("mustBeData", 2)
-      .maxLength("mustBeData", 64);
+      .ItIsshouldToBeThere(["collOfTable", "query", "mustBeData"])
+      .MaxLength("collOfTable", 64)
+      .MinLength("collOfTable", 2)
+      .MaxLength("query", 2)
+      .MinLength("query", 1)
+      .MinLength("mustBeData", 2)
+      .MaxLength("mustBeData", 64);
   }
-  private getUserOfRooms(rooms: Rooms) {
+  private GetUserOfRooms(rooms: Rooms) {
     return rooms.map(async (room: Room | any) => {
       room.ownerData = await this.getUser(room.owner);
     });
   }
 
-  searchRoom(
+  SearchRoom(
     sort: SortQuery[],
     queryArr: QueryStringObj[],
     city?: string,
     index: number = 0,
     limit: number = 50
   ): Promise<Rooms> {
-    this.roomSearchQueryValidator(queryArr);
+    this.RoomSearchQueryValidator(queryArr);
     return this.db
-      .listRoomByRankORCity({ queryArr, sort, limit, index, city })
+      .ListRoomByRankORCity({ queryArr, sort, limit, index, city })
       .then((rooms: Rooms) => {
-        this.getUserOfRooms(rooms);
+        this.GetUserOfRooms(rooms);
       })
       .catch((err) => err);
   }
 
-  private userDataValidateAndRemove(user: User): User {
-    const data = new Validator(user).removeAnotherData([
+  private UserDataValidateAndRemove(user: User): User {
+    const data = new Validator(user).RemoveAnotherData([
       "password",
       "isLandAgent",
       "yearOfBirdth",
       "landAgent",
     ]).getVal;
-    const landAgetnData = new Validator(data.landAgent).removeAnotherData([
+    const landAgetnData = new Validator(data.landAgent).RemoveAnotherData([
       "turkisIdNumber",
     ]).getVal;
     return { ...data, ...landAgetnData };
   }
 
   getUser(id: string): Promise<User> {
-    return this.db.getUserById(id).then((user: User) => {
-      return this.userDataValidateAndRemove(user);
+    return this.db.GetUserById(id).then((user: User) => {
+      return this.UserDataValidateAndRemove(user);
     });
   }
 }

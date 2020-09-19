@@ -19,37 +19,37 @@ export class UserClass {
   }
   //#region private
 
-  amIauth() {
+  AmIauth() {
     if (this.uid) throw new Error("login degilsin");
-    this.getMe()
+    this.GetMe()
       .then((me) => me)
       .catch((me) => {
         throw me;
       });
   }
 
-  private userDartaValidte(data: User) {
+  private UserDartaValidte(data: User) {
     new Validator(data)
-      .itIsshouldToBeThere([
+      .ItIsshouldToBeThere([
         "isLandAgent",
         "name",
         "email",
         "password",
         "yearOfBirdth",
       ])
-      .maxLength("name", 64)
-      .minLength("name", 2)
-      .maxWordCoud("name", 4)
-      .isEmail("email")
-      .minLength("password", 8)
-      .maxLength("password", 64)
-      .isBoolean("isLandAgent")
-      .isNumber("yearOfBirdth");
+      .MaxLength("name", 64)
+      .MinLength("name", 2)
+      .MaxWordCoud("name", 4)
+      .IsEmail("email")
+      .MinLength("password", 8)
+      .MaxLength("password", 64)
+      .IsBoolean("isLandAgent")
+      .IsNumber("yearOfBirdth");
   }
   //#endregion private
   //#region getMe
-  getMe(): Promise<User> {
-    return this.db.getUserById(this.uid).then((data) => {
+  GetMe(): Promise<User> {
+    return this.db.GetUserById(this.uid).then((data) => {
       data.password = "";
       if (data.landAgent) data.landAgent.turkisIdNumber = "";
       return data;
@@ -59,16 +59,16 @@ export class UserClass {
 
   //#region delMe
 
-  delMe(): Promise<boolean | Error> {
-    return this.db.delUserById(this.uid);
+  DelMe(): Promise<boolean | Error> {
+    return this.db.DelUserById(this.uid);
   }
 
   //#endregion delMe
 
   //#region updateMe
-  updateMe(data: User | any): Promise<User> {
-    this.userDartaValidte(data);
-    return this.getMe().then((me) => {
+  UpdateMe(data: User | any): Promise<User> {
+    this.UserDartaValidte(data);
+    return this.GetMe().then((me) => {
       if (me.isLandAgent) {
         delete data.landAgent?.turkisIdNumber;
         delete data.landAgent?.firstName;
@@ -79,26 +79,26 @@ export class UserClass {
       data.disabled = true;
       // send mail daha yazilmadi
       delete data.rank;
-      return this.db.updateUserById(this.uid, data);
+      return this.db.UpdateUserById(this.uid, data);
     });
   }
   //#endregion updateMe
 
   //#region roomAddToCart
-  roomAddToCart(roomId: string): Promise<Room> {
-    return this.db.addRoomToCard(this.uid, roomId);
+  RoomAddToCart(roomId: string): Promise<Room> {
+    return this.db.AddRoomToCard(this.uid, roomId);
   }
   //#endregion roomAddToCart
 
   //#region roomDelToCart
-  roomDelToCart(roomId: string): Promise<Room> {
-    return this.db.delRoomToCard(this.uid, roomId);
+  RoomDelToCart(roomId: string): Promise<Room> {
+    return this.db.DelRoomToCard(this.uid, roomId);
   }
   //#endregion roomDelToCart
 
   //#region rankRoom
-  rankRoom(roomId: string, like: boolean): Promise<Room> {
-    return this.db.addLikeOrDislikeRoomById(roomId, like);
+  RankRoom(roomId: string, like: boolean): Promise<Room> {
+    return this.db.AddLikeOrDislikeRoomById(roomId, like);
   }
   //#endregion rankRoom
 }

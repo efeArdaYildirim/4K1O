@@ -15,7 +15,7 @@ export class App {
   constructor(dal: DAL) {
     this.db = dal;
     this.transporter;
-    this.smtpConnection()
+    this.SmtpConnection()
       .then((res) => res)
       .catch((err) => err);
   }
@@ -23,7 +23,7 @@ export class App {
   /**
    * @private
    */
-  async smtpConnection(): Promise<void> {
+  async SmtpConnection(): Promise<void> {
     if (active) {
       this.transporter = createTransport(connection);
     } else {
@@ -32,16 +32,16 @@ export class App {
     return;
   }
 
-  private rankalgorithm({ like, dislike }: any): number {
+  private Rankalgorithm({ like, dislike }: any): number {
     return like - dislike;
   }
 
-  async rankCalcByLikefromRoom(roomId: string): Promise<void> {
+  async RankCalcByLikefromRoom(roomId: string): Promise<void> {
     try {
-      const { like, dislike } = await this.db.getRoomById(roomId);
-      const rank: number = this.rankalgorithm({ like, dislike });
+      const { like, dislike } = await this.db.GetRoomById(roomId);
+      const rank: number = this.Rankalgorithm({ like, dislike });
       this.db
-        .upDateRoomById(roomId, { rank })
+        .UpDateRoomById(roomId, { rank })
         .then((result) => result)
         .catch((err) => err);
       return;
@@ -51,7 +51,7 @@ export class App {
     }
   }
 
-  sendMailToReciver(data: PayloadOfEMail) {
+  SendMailToReciver(data: PayloadOfEMail) {
     this.transporter
       .sendMail({ ...data, from: "info@4k1o.com" })
       .then((info: any) => {
@@ -70,7 +70,7 @@ export class App {
     return;
   }
 
-  turkisIdCheck(id: any): void {
+  TurkisIdCheck(id: any): void {
     return;
   }
 }
