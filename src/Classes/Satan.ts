@@ -29,7 +29,7 @@ export class LandAgent extends UserClass {
 
   private isItMyRoom(room: Room): void {
     const roomOwner = room.owner;
-    if (roomOwner !== this.uid) throw new Error("basksinin odasini silemesin");
+    if (roomOwner !== this.uid) throw new Error("sesnin odan degil");
   }
 
   addRoom(room: Room) {
