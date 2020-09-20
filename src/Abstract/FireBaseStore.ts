@@ -137,7 +137,7 @@ abstract class FireBaseStore implements DB {
    *
    * @param {WriteAData} // isimlendirilmis degisken alir
    */
-  async WriteAData({ table, data, id }: WriteADataParams): Promise<boolean> {
+  async WriteADataToDB({ table, data, id }: WriteADataParams): Promise<boolean> {
     try {
       if (id) await this.db.collection(table).doc(id).set(data);
       else await this.db.collection(table).add(data);

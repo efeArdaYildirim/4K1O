@@ -34,11 +34,11 @@ export class LandAgent extends UserClass {
 
   AddRoom(room: Room) {
     this.RoomDataValidator(room);
-    return this.db.CreateRoom({ ...room, owner: this.uid });
+    return this.db.CreateRoomToDB({ ...room, owner: this.uid });
   }
 
   GetMyRooms(): Promise<Rooms> {
-    return this.db.GetMyRooms(this.uid);
+    return this.db.GetMyRoomsFromDB(this.uid);
   }
 
   DelMyRoom(roomId: string): Promise<boolean | Error> {
@@ -63,7 +63,7 @@ export class LandAgent extends UserClass {
   }
 
   AmILandAgent(): Promise<void> {
-    return this.GetMe().then((me: User) => {
+    return this.GetMeFromUser().then((me: User) => {
       if (me.isLandAgent) throw new Error("satici degilsin");
     });
   }

@@ -26,8 +26,8 @@ class DAL extends FireBaseStore {
   //#endregion getUserById
 
   //#region createUser
-  CreatUser({ data, id }: any): Promise<boolean> {
-    return this.WriteAData({ table: this.tables.users, data, id });
+  CreatUserToDB({ data, id }: any): Promise<boolean> {
+    return this.WriteADataToDB({ table: this.tables.users, data, id });
   }
   //#endregion createUser
 
@@ -61,7 +61,7 @@ class DAL extends FireBaseStore {
   //#endregion searchUserByNameAndPasswd
 
   //#region addRoomToCard
-  AddRoomToCard(userId: string, roomId: string): Promise<Room> {
+  AddRoomToCardWriteToDB(userId: string, roomId: string): Promise<Room> {
     const data = { cards: admin.firestore.FieldValue.arrayUnion(roomId) };
     return this.UpdateById({
       table: this.tables.users,
@@ -72,7 +72,7 @@ class DAL extends FireBaseStore {
   //#endregion addRoomToCard
 
   //#region delRoomToCard
-  DelRoomToCard(userId: string, roomId: string): Promise<Room> {
+  DelRoomToCardWriteToDB(userId: string, roomId: string): Promise<Room> {
     const data = {
       cards: admin.firestore.FieldValue.arrayRemove(roomId),
     };
@@ -95,8 +95,8 @@ class DAL extends FireBaseStore {
   //#endregion getRoomById
 
   //#region createRoom
-  CreateRoom(data: Room): Promise<boolean> {
-    return this.WriteAData({ table: this.tables.rooms, data });
+  CreateRoomToDB(data: Room): Promise<boolean> {
+    return this.WriteADataToDB({ table: this.tables.rooms, data });
   }
   //#endregion createRoom
 
@@ -151,7 +151,7 @@ class DAL extends FireBaseStore {
 
   //#region listRoomByRankORCity
 
-  ListRoomByRankORCity({
+  ListRoomByRankORCityFromDB({
     queryArr,
     index,
     sort,
@@ -178,7 +178,7 @@ class DAL extends FireBaseStore {
 
   //#region getMyRooms
 
-  GetMyRooms(id: string): Promise<Rooms> {
+  GetMyRoomsFromDB(id: string): Promise<Rooms> {
     const query: QueryStringObj[] = [
       { collOfTable: "owner", query: "==", mustBeData: id },
     ];

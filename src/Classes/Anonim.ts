@@ -38,7 +38,7 @@ export class Anonim extends AnonimFirebase {
   ): Promise<Rooms> {
     this.RoomSearchQueryValidator(queryArr);
     return this.db
-      .ListRoomByRankORCity({ queryArr, sort, limit, index, city })
+      .ListRoomByRankORCityFromDB({ queryArr, sort, limit, index, city })
       .then((rooms: Rooms) => {
         this.GetUserOfRooms(rooms);
       })

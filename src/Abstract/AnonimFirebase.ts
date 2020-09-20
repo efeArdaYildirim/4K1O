@@ -51,7 +51,7 @@ export class AnonimFirebase {
       disabled: true,
     });
 
-    const isCreated = this.db.CreatUser({ data: user, id: createdUser.uid });
+    const isCreated = this.db.CreatUserToDB({ data: user, id: createdUser.uid });
 
     if (isCreated) return isCreated;
     await admin.auth().deleteUser(createdUser.uid);

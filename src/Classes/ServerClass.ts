@@ -40,7 +40,7 @@ export class ServerClass implements ServerI {
       });
       this.user.setUid = context.auth.uid;
       this.user.AmIauth();
-      return { status: true, data: await this.user.UpdateMe(data) };
+      return { status: true, data: await this.user.UpdateMeFromUser(data) };
     } catch (err) {
       logger.error("updateMe", {
         err: err.message,
@@ -132,7 +132,7 @@ export class ServerClass implements ServerI {
       });
       this.user.setUid = context.auth!.uid;
       this.user.AmIauth();
-      return { status: true, data: await this.user.DelMe() };
+      return { status: true, data: await this.user.DelMeFromUser() };
     } catch (err) {
       logger.error("deleteMe", {
         err: err.message,
@@ -152,8 +152,8 @@ export class ServerClass implements ServerI {
       });
       this.user.setUid = context.auth!.uid;
       this.user.AmIauth();
-      if (data.add) await this.user.RoomAddToCart(data.id);
-      else await this.user.RoomDelToCart(data.id);
+      if (data.add) await this.user.RoomAddToCartFromUser(data.id);
+      else await this.user.RoomDelToCartFromUser(data.id);
       return { status: true };
     } catch (err) {
       logger.error("addCard", {
@@ -172,7 +172,7 @@ export class ServerClass implements ServerI {
       logger.info("rank", { arguments: { data: data, context: context.auth } });
       this.user.setUid = context.auth!.uid;
       this.user.AmIauth();
-      await this.user.RankRoom(data.id, data.rank);
+      await this.user.RankRoomFromUser(data.id, data.rank);
       return { status: true };
     } catch (err) {
       logger.error("rank", {

@@ -21,7 +21,7 @@ export class UserClass {
 
   AmIauth() {
     if (this.uid) throw new Error("login degilsin");
-    this.GetMe()
+    this.GetMeFromUser()
       .then((me) => me)
       .catch((me) => {
         throw me;
@@ -48,7 +48,7 @@ export class UserClass {
   }
   //#endregion private
   //#region getMe
-  GetMe(): Promise<User> {
+  GetMeFromUser(): Promise<User> {
     return this.db.GetUserById(this.uid).then((data) => {
       data.password = "";
       if (data.landAgent) data.landAgent.turkisIdNumber = "";
@@ -59,16 +59,16 @@ export class UserClass {
 
   //#region delMe
 
-  DelMe(): Promise<boolean | Error> {
+  DelMeFromUser(): Promise<boolean | Error> {
     return this.db.DelUserById(this.uid);
   }
 
   //#endregion delMe
 
   //#region updateMe
-  UpdateMe(data: User | any): Promise<User> {
+  UpdateMeFromUser(data: User | any): Promise<User> {
     this.UserDartaValidte(data);
-    return this.GetMe().then((me) => {
+    return this.GetMeFromUser().then((me) => {
       if (me.isLandAgent) {
         delete data.landAgent?.turkisIdNumber;
         delete data.landAgent?.firstName;
@@ -85,19 +85,19 @@ export class UserClass {
   //#endregion updateMe
 
   //#region roomAddToCart
-  RoomAddToCart(roomId: string): Promise<Room> {
-    return this.db.AddRoomToCard(this.uid, roomId);
+  RoomAddToCartFromUser(roomId: string): Promise<Room> {
+    return this.db.AddRoomToCardWriteToDB(this.uid, roomId);
   }
   //#endregion roomAddToCart
 
   //#region roomDelToCart
-  RoomDelToCart(roomId: string): Promise<Room> {
-    return this.db.DelRoomToCard(this.uid, roomId);
+  RoomDelToCartFromUser(roomId: string): Promise<Room> {
+    return this.db.DelRoomToCardWriteToDB(this.uid, roomId);
   }
   //#endregion roomDelToCart
 
   //#region rankRoom
-  RankRoom(roomId: string, like: boolean): Promise<Room> {
+  RankRoomFromUser(roomId: string, like: boolean): Promise<Room> {
     return this.db.AddLikeOrDislikeRoomById(roomId, like);
   }
   //#endregion rankRoom
