@@ -1,16 +1,18 @@
 export class Validator {
   private data: any;
-  private propName: any;
   constructor(data: any) {
     this.data = data;
-    this.propName = Object.getOwnPropertyNames(data);
   }
 
   public get getVal() {
     return this.data;
   }
 
-  maxLength(obj: string, len: number) {
+  get propName() {
+    return Object.getOwnPropertyNames(this.data)
+  }
+
+  MaxLength(obj: string, len: number) {
     if ((this.data[obj] as string | string[]).length > len)
       throw new Error("veri cok buyuk");
     return this;
@@ -106,5 +108,12 @@ export class Validator {
 
   maxNumberValue(obj: string, val: number) {
     if (this.data[obj] > val) throw new Error("veri cok buyuk");
+  }
+
+  CheckIfItHasMoreThanthat(datas: string[]) {
+    datas.forEach((data: string) => {
+      delete this.data[data]
+    })
+    if (this.propName.length > 0) throw new Error('fazla veri var')
   }
 }
