@@ -1,21 +1,13 @@
 import { MongoClient } from "mongodb";
 import { DB } from '../implements/DB';
 import { QueryStringObj } from '../tipitipler/Extralar';
-import { FilterFuncParams, WriteADataParams, DelByIdParams, UpdateByIdParams, GetByIdParams } from '../tipitipler/FireBaseStoreTypes';
+import { FilterFuncParams, WriteADataParams, DelByIdParams, UpdateByIdParams, GetByIdParams, SortQuery } from '../tipitipler/FireBaseStoreTypes';
 
-export abstract class MongoDB implements DB {
-  db: MongoClient;
-  dbName: string;
-
-  constructor(connection: any, name: string) {
-    this.db = connection
-    this.dbName = name
-  }
-
-  private async openConnection() {
-    await this.db.connect();
-    return this.db.db(this.dbName)
-  }
+class MongoQuery {
+  query: any
+  sort: any
+  limit: any
+  skip: any
 
   private MongoQueryFromSingleQuery({ collOfTable, query, mustBeData }: QueryStringObj): object {
     const mongoQuery: any = {};
@@ -41,13 +33,45 @@ export abstract class MongoDB implements DB {
     return mongoQuery
   }
 
-  private MongoQueryFromQueryStringObjs(queryArr: QueryStringObj[]): object[] {
-    return queryArr.map((q) => {
+  MongoQueryFromQueryStringObjs(queryArr: QueryStringObj[]) {
+    const query = queryArr.map((q) => {
       return this.MongoQueryFromSingleQuery(q)
     })
+    this.query = { $match: query }
   }
 
-  Filter({ table, queryArr, returnDBQuery, }: FilterFuncParams): Promise<Object[]> {
+  QueryLimit(index = 1, limit: number) {
+    this.limit = { $limit: limit * index }
+    this.skip = { $skip: index - 1 }
+  }
+
+  SortQuery({ orderBy, sortBy }: SortQuery) {
+    const sortQ: any = {}
+    sortQ[orderBy] = sortBy === 'asc' ? 1 : -1
+    this.sort = { $sort: sortQ }
+  }
+
+  get data() {
+    return [this.sort, this.limit, this.skip, this.query]
+  }
+}
+export abstract class MongoDB implements DB {
+  db: MongoClient;
+  dbName: string;
+
+  constructor(connection: any, name: string) {
+    this.db = connection
+    this.dbName = name
+  }
+
+  private async openConnection() {
+    await this.db.connect();
+    return this.db.db(this.dbName)
+  }
+
+
+
+  Filter({ table, queryArr, returnDBQuery, limit = 50, index = 1, sort }: FilterFuncParams): Promise<Object[]> {
     throw new Error('Method not implemented.');
   }
   WriteADataToDB({ table, data, id }: WriteADataParams): Promise<Boolean> {
