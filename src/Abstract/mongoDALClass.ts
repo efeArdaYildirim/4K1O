@@ -1,3 +1,4 @@
+import { database } from 'firebase-admin';
 import { MongoClient } from "mongodb";
 import { DB } from '../implements/DB';
 import { QueryStringObj } from '../tipitipler/Extralar';
@@ -115,7 +116,19 @@ export abstract class MongoDB implements DB {
       await this.db.close()
     }
   }
-  WriteADataToDB({ table, data, id }: WriteADataParams): Promise<Boolean> {
+  async WriteADataToDB({ table, data, id }: WriteADataParams): Promise<Boolean> {
+    try {
+      const database = await this.openConnection()
+      const collection = database.collection(table)
+      const q: any = {}
+      if (id) q['_id'] = id
+      const { result } = await collection.insertOne({ ...q, ...data })
+      return result.ok === 1
+        ? true
+        : false
+    } finally {
+      await this.db.close()
+    }
     throw new Error('Method not implemented.');
   }
   DelById({ table, id }: DelByIdParams): Promise<boolean | Error> {
