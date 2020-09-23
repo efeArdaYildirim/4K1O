@@ -4,10 +4,12 @@ import { QueryStringObj } from '../tipitipler/Extralar';
 import { FilterFuncParams, WriteADataParams, DelByIdParams, UpdateByIdParams, GetByIdParams, SortQuery } from '../tipitipler/FireBaseStoreTypes';
 
 class MongoQuery {
-  query: any
-  sort: any
-  limit: any
-  skip: any
+  private query: any
+  private sort: any
+  private limit: any
+  private skip: any
+  private search: any;
+  private include!: object;
 
   private MongoQueryFromSingleQuery({ collOfTable, query, mustBeData }: QueryStringObj): object {
     const mongoQuery: any = {};
@@ -38,21 +40,47 @@ class MongoQuery {
       return this.MongoQueryFromSingleQuery(q)
     })
     this.query = { $match: query }
+    return this
   }
 
   QueryLimit(index = 1, limit: number) {
     this.limit = { $limit: limit * index }
     this.skip = { $skip: index - 1 }
+    return this
+
   }
 
-  SortQuery({ orderBy, sortBy }: SortQuery) {
+  SortQuery(sort: SortQuery[]) {
     const sortQ: any = {}
-    sortQ[orderBy] = sortBy === 'asc' ? 1 : -1
+    sort.forEach((q: SortQuery) => {
+      sortQ[q.orderBy] = q.sortBy === 'asc' ? 1 : -1
+    });
     this.sort = { $sort: sortQ }
+    return this
+
+  }
+  Include(data: string[]) {
+    const include: any = {}
+    data.forEach((item: string) => {
+      include[item] = 1
+    })
+    this.include = { $project: { ...this.include, ...include } }
   }
 
-  get data() {
-    return [this.sort, this.limit, this.skip, this.query]
+  Exclude(data: string[]) {
+    const exclude: any = {}
+    data.forEach((item: string) => {
+      exclude[item] = 0
+    })
+    this.include = { $project: { ...this.include, ...exclude } }
+  }
+
+  TextSearch(search: string) {
+    this.search = { $text: { $search: search } }
+  }
+
+  get data(): object[] {
+    return [{ ...this }]
   }
 }
 export abstract class MongoDB implements DB {
@@ -71,8 +99,21 @@ export abstract class MongoDB implements DB {
 
 
 
-  Filter({ table, queryArr, returnDBQuery, limit = 50, index = 1, sort }: FilterFuncParams): Promise<Object[]> {
-    throw new Error('Method not implemented.');
+  async Filter({ table, queryArr, limit = 50, index = 1, sort = [{ orderBy: 'rank', sortBy: 'asc' }] }: FilterFuncParams): Promise<Object[]> {
+    try {
+      const query = new MongoQuery()
+        .MongoQueryFromQueryStringObjs(queryArr)
+        .QueryLimit(index, limit)
+        .SortQuery(sort)
+        .data
+      const database = await this.openConnection()
+      const collection = database.collection(table)
+      const { error, result } = await collection.aggregate(query) as any
+      if (error) throw error
+      return result
+    } finally {
+      await this.db.close()
+    }
   }
   WriteADataToDB({ table, data, id }: WriteADataParams): Promise<Boolean> {
     throw new Error('Method not implemented.');
