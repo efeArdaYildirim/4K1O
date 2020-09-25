@@ -1,5 +1,5 @@
 import { database } from 'firebase-admin';
-import { Cursor, MongoClient, ReplSet } from "mongodb";
+import { Cursor, MongoClient, ReplSet, Db, ObjectId } from "mongodb";
 import { DB } from '../implements/DB';
 import { QueryStringObj } from '../tipitipler/Extralar';
 import { FilterFuncParams, WriteADataParams, DelByIdParams, UpdateByIdParams, GetByIdParams, SortQuery } from '../tipitipler/FireBaseStoreTypes';
@@ -8,19 +8,24 @@ import { FilterFuncParams, WriteADataParams, DelByIdParams, UpdateByIdParams, Ge
 export class MongoDB implements DB {
   db: MongoClient;
   dbName: string;
+  database: Db;
 
   constructor(name: string = '4k10') {
     this.dbName = name
   }
 
-  async close(): Promise<any> {
-    return this.db.close()
+  async close(): Promise<void> {
+    try {
+      await this.db.close()
+    } catch (error) {
+      throw new Error('balanti kapanamadi')
+    }
   }
 
-  private async openConnection() {
+  private async openConnection(): Promise<void> {
     this.db = new MongoClient('mongodb://localhost:27017/', { poolSize: 1000, useUnifiedTopology: true })
     await this.db.connect();
-    return this.db.db(this.dbName)
+    this.database = this.db.db(this.dbName)
   }
 
   SortQuery(sort: SortQuery[]) {
@@ -73,19 +78,18 @@ export class MongoDB implements DB {
     try {
       const query = this.MongoQueryFromQueryStringObjs(queryArr)
       const sortQuery = this.SortQuery(sort)
-      const database = await this.openConnection()
-      const collection = database.collection(table)
+      await this.openConnection()
+      const collection = this.database.collection(table)
       const cursor = collection.find(query).sort(sortQuery).limit(limit * index).skip(index)
-      // const cursor = collection.find({});
       return await cursor.toArray()
     } finally {
-      this.db.close().then(res => console.log).catch(err => console.error)
+      await this.close()
     }
   }
   async WriteADataToDB({ table, data, id }: WriteADataParams): Promise<Boolean> {
     try {
-      const database = await this.openConnection()
-      const collection = database.collection(table)
+      await this.openConnection()
+      const collection = this.database.collection(table)
       const q: any = {}
       if (id) q['_id'] = id
       const { result } = await collection.insertOne({ ...q, ...data })
@@ -93,17 +97,24 @@ export class MongoDB implements DB {
         ? true
         : false
     } finally {
-      this.db.close().then(res => console.log).catch(err => console.error)
+      await this.close()
     }
-    throw new Error('Method not implemented.');
   }
-  DelById({ table, id }: DelByIdParams): Promise<boolean | Error> {
-    throw new Error('Method not implemented.');
+  async DelById({ table, id }: DelByIdParams): Promise<boolean | Error> {
+    try {
+      await this.openConnection()
+      const collection = this.database.collection(table)
+      const { result } = await collection.deleteOne({ "_id": ObjectId(id) })
+      return result.ok === 1 ? true : false
+    } finally {
+      await this.close()
+    }
+
   }
   UpdateById({ table, id, data }: UpdateByIdParams): Promise<Object | Error> {
     throw new Error('Method not implemented.');
   }
-  GetById({ table, id, returnDBQuery, }: GetByIdParams): Promise<JSON | FirebaseFirestore.DocumentReference<FirebaseFirestore.DocumentData> | Error> {
+  GetById({ table, id, returnDBQuery, }: GetByIdParams): Promise<JSON | object | Error> {
     throw new Error('Method not implemented.');
   }
 

@@ -29,8 +29,7 @@ interface DB {
     id,
     returnDBQuery,
   }: GetByIdParams): Promise<
-    JSON | Error | firestore.DocumentReference<firestore.DocumentData>
-  >;
+    JSON | object | Error>
 }
 
 export { DB };
