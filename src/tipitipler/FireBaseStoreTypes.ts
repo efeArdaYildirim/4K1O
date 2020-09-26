@@ -5,7 +5,6 @@ export type SortQuery = { orderBy: string; sortBy: "asc" | "desc" };
 export type FilterFuncParams = {
   table: string;
   queryArr: QueryStringObj[];
-  returnDBQuery?: boolean;
   limit?: number;
   index?: number;
   sort?: SortQuery[];
@@ -13,7 +12,7 @@ export type FilterFuncParams = {
 
 export type WriteADataParams = {
   table: string;
-  data: JSON | any[];
+  data: JSON | object;
   id?: string;
 };
 
@@ -36,7 +35,6 @@ export type DBDataParseParams = {
 export type GetByIdParams = {
   table: string;
   id: string;
-  returnDBQuery?: boolean;
 };
 
 export type DelByIdParams = {

@@ -93,7 +93,10 @@ export class MongoDB implements DB {
       const collection = this.database.collection(table)
       const q: any = {}
       if (id) q['_id'] = id
-      const { result } = await collection.insertOne({ ...q, ...data })
+      const { result } = await collection.insertOne({
+        ...q, ...data, createdTime: new Date().toISOString()
+
+      })
       return result.ok === 1
     } finally {
       await this.close()
@@ -104,7 +107,7 @@ export class MongoDB implements DB {
     try {
       await this.openConnection()
       const collection = this.database.collection(table)
-      const { result } = await collection.deleteOne({ "_id": ObjectId(id) })
+      const { result } = await collection.deleteOne({ "_id": new ObjectId(id) })
       if (result.n === 0) throw new Error('no data')
       return result.ok === 1
     } finally {
@@ -123,7 +126,7 @@ export class MongoDB implements DB {
       const update = this.isUpdateData(data);
       await this.openConnection()
       const collection = this.database.collection(table)
-      const { result } = await collection.updateOne({ _id: ObjectId(id) }, {
+      const { result } = await collection.updateOne({ _id: new ObjectId(id) }, {
         ...update,
         $currentDate: {
           lastModified: true,
@@ -136,11 +139,11 @@ export class MongoDB implements DB {
     }
   }
 
-  async GetById({ table, id, returnDBQuery, }: GetByIdParams): Promise<object | Error> {
+  async GetById({ table, id }: GetByIdParams): Promise<object | Error> {
     try {
       await this.openConnection()
       const collection = this.database.collection(table)
-      const cursor = await collection.findOne({ _id: ObjectId(id) })
+      const cursor = await collection.findOne({ _id: new ObjectId(id) })
       if (cursor === null) throw new Error('no data')
       return cursor
     } finally {
@@ -148,6 +151,26 @@ export class MongoDB implements DB {
     }
 
   }
+  /**
+   * artirmaa verisi doner.
+   * bunun update by id ye data seklinde verilmesi lazim.
+   * @param coll verisi degisecek sutun
+   * @param inc pozitif yada negtif sayi
+   * @retrun update data
+   */
+  increementData(coll, inc): object {
+    const data = {}
+    data[coll] = inc
+    return { $inc: data }
+  }
 
-
+  /**
+   * push verisi doner.
+   * update by id ye data olarak veriemli
+   * @param data push edilecek veri
+   * @returns update data
+   */
+  pushData(data): object {
+    return { $push: data }
+  }
 }
