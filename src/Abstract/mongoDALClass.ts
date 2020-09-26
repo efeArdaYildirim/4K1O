@@ -5,9 +5,10 @@ import { FilterFuncParams, WriteADataParams, DelByIdParams, UpdateByIdParams, Ge
 
 
 export class MongoDB implements DB {
-  db: MongoClient;
+  db: MongoClient = null as unknown as MongoClient; // type script de this ile basliyan degiskenle baslangicta tanimlanmali oyuzden boyle
   dbName: string;
-  database: Db;
+  database: Db = null as unknown as Db;
+  connection: string = 'mongodb://localhost:27017/'
 
   constructor(name: string = '4k10') {
     this.dbName = name
@@ -22,7 +23,7 @@ export class MongoDB implements DB {
   }
 
   private async openConnection(): Promise<void> {
-    this.db = new MongoClient('mongodb://localhost:27017/', { poolSize: 1000, useUnifiedTopology: true })
+    this.db = new MongoClient(this.connection, { poolSize: 20, useUnifiedTopology: true })
     await this.db.connect();
     this.database = this.db.db(this.dbName)
   }
@@ -65,11 +66,12 @@ export class MongoDB implements DB {
       return this.MongoQueryFromSingleQuery(q)
     })
     const result: any = {}
-    for (const i of MQuery) {
+    Object.getOwnPropertyNames(MQuery).forEach((i: any) => {
       for (const j in i) {
         result[j] = i[j]
       }
-    }
+    })
+
     return result
   }
 
@@ -115,7 +117,7 @@ export class MongoDB implements DB {
 
   }
 
-  private isUpdateData(data) {
+  private isUpdateData(data: object) {
     if (Object.getOwnPropertyNames(data)[0][0] !== '$') return { $set: data }
     return data
   }
@@ -157,8 +159,8 @@ export class MongoDB implements DB {
    * @param inc pozitif yada negtif sayi
    * @retrun update data
    */
-  increementData(coll, inc): object {
-    const data = {}
+  increementData(coll: string, inc: number): object {
+    const data: any = {}
     data[coll] = inc
     return { $inc: data }
   }
@@ -169,12 +171,12 @@ export class MongoDB implements DB {
    * @param data push edilecek veri
    * @returns update data
    */
-  pushData(data): object {
+  pushData(data: object): object {
     return { $push: data }
   }
 
   async pullData(colum: string, query: any, table: string) {
-    const data = {}
+    const data: any = {}
     data[colum] = { $elemMatch: query }
     await this.openConnection()
     const collection = this.database.collection(table)
