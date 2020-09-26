@@ -105,6 +105,7 @@ export class MongoDB implements DB {
       await this.openConnection()
       const collection = this.database.collection(table)
       const { result } = await collection.deleteOne({ "_id": ObjectId(id) })
+      if (result.n === 0) throw new Error('no data')
       return result.ok === 1 ? true : false
     } finally {
       await this.close()
@@ -114,7 +115,17 @@ export class MongoDB implements DB {
   UpdateById({ table, id, data }: UpdateByIdParams): Promise<Object | Error> {
     throw new Error('Method not implemented.');
   }
-  GetById({ table, id, returnDBQuery, }: GetByIdParams): Promise<JSON | object | Error> {
+  async GetById({ table, id, returnDBQuery, }: GetByIdParams): Promise<object | Error> {
+    try {
+      await this.openConnection()
+      const collection = this.database.collection(table)
+      const cursor = await collection.findOne({ _id: ObjectId(id) })
+      if (cursor === null) throw new Error('no data')
+      return cursor
+    } finally {
+      await this.close()
+    }
+
     throw new Error('Method not implemented.');
   }
 

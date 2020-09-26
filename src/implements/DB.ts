@@ -28,8 +28,7 @@ interface DB {
     table,
     id,
     returnDBQuery,
-  }: GetByIdParams): Promise<
-    JSON | object | Error>
+  }: GetByIdParams): Promise<object | Error>
 }
 
 export { DB };
