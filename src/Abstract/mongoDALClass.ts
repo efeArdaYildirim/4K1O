@@ -1,4 +1,3 @@
-import { database } from 'firebase-admin';
 import { Cursor, MongoClient, ReplSet, Db, ObjectId } from "mongodb";
 import { DB } from '../implements/DB';
 import { QueryStringObj } from '../tipitipler/Extralar';
@@ -172,5 +171,14 @@ export class MongoDB implements DB {
    */
   pushData(data): object {
     return { $push: data }
+  }
+
+  async pullData(colum: string, query: any, table: string) {
+    const data = {}
+    data[colum] = { $elemMatch: query }
+    await this.openConnection()
+    const collection = this.database.collection(table)
+    const { result } = await collection.updateOne({}, { $pull: data })
+    return result.nModified !== 0
   }
 }

@@ -8,6 +8,7 @@ export type FilterFuncParams = {
   limit?: number;
   index?: number;
   sort?: SortQuery[];
+  returnDBQuery?: any
 };
 
 export type WriteADataParams = {
@@ -35,6 +36,7 @@ export type DBDataParseParams = {
 export type GetByIdParams = {
   table: string;
   id: string;
+  returnDBQuery?: any
 };
 
 export type DelByIdParams = {
