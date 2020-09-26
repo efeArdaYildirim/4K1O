@@ -62,29 +62,17 @@ class DAL extends MongoDB {
   //#endregion searchUserByNameAndPasswd
 
   //#region addRoomToCard
-  AddRoomToCardWriteToDB(userId: string, roomId: string): Promise<Room> {
-    const data = { cards: admin.firestore.FieldValue.arrayUnion(roomId) };
-    return this.UpdateById({
-      table: this.tables.users,
-      id: userId,
-      data,
-    }) as Promise<Room>;
+  AddRoomToCardWriteToDB(userId: string, roomId: string): Promise<boolean> {
+    return this.pushData('cards', roomId, this.tables.users, userId)
+
+
   }
   //#endregion addRoomToCard
 
   //#region delRoomToCard
-  DelRoomToCardWriteToDB(userId: string, roomId: string): Promise<Room> {
-    const data = {
-      cards: admin.firestore.FieldValue.arrayRemove(roomId),
-    };
+  DelRoomToCardWriteToDB(userId: string, roomId: string): Promise<boolean> {
+    return this.pullData('cards', roomId, this.tables.users, userId)
 
-    return this.pullData('cards', {})
-
-    return this.UpdateById({
-      table: this.tables.users,
-      id: userId,
-      data,
-    }) as Promise<Room>;
   }
   //#endregion delRoomToCard
 
