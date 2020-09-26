@@ -86,6 +86,7 @@ export class MongoDB implements DB {
       await this.close()
     }
   }
+
   async WriteADataToDB({ table, data, id }: WriteADataParams): Promise<Boolean> {
     try {
       await this.openConnection()
@@ -94,27 +95,47 @@ export class MongoDB implements DB {
       if (id) q['_id'] = id
       const { result } = await collection.insertOne({ ...q, ...data })
       return result.ok === 1
-        ? true
-        : false
     } finally {
       await this.close()
     }
   }
+
   async DelById({ table, id }: DelByIdParams): Promise<boolean | Error> {
     try {
       await this.openConnection()
       const collection = this.database.collection(table)
       const { result } = await collection.deleteOne({ "_id": ObjectId(id) })
       if (result.n === 0) throw new Error('no data')
-      return result.ok === 1 ? true : false
+      return result.ok === 1
     } finally {
       await this.close()
     }
 
   }
-  UpdateById({ table, id, data }: UpdateByIdParams): Promise<Object | Error> {
-    throw new Error('Method not implemented.');
+
+  private isUpdateData(data) {
+    if (Object.getOwnPropertyNames(data)[0][0] !== '$') return { $set: data }
+    return data
   }
+
+  async UpdateById({ table, id, data }: UpdateByIdParams): Promise<Object | Error> {
+    try {
+      const update = this.isUpdateData(data);
+      await this.openConnection()
+      const collection = this.database.collection(table)
+      const { result } = await collection.updateOne({ _id: ObjectId(id) }, {
+        ...update,
+        $currentDate: {
+          lastModified: true,
+        },
+      })
+      if (result.nModified === 0) throw new Error('no data')
+      return result.ok === 1
+    } finally {
+      await this.close()
+    }
+  }
+
   async GetById({ table, id, returnDBQuery, }: GetByIdParams): Promise<object | Error> {
     try {
       await this.openConnection()
@@ -126,7 +147,6 @@ export class MongoDB implements DB {
       await this.close()
     }
 
-    throw new Error('Method not implemented.');
   }
 
 
