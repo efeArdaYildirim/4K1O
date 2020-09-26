@@ -4,7 +4,7 @@ import { QueryStringObj } from '../tipitipler/Extralar';
 import { FilterFuncParams, WriteADataParams, DelByIdParams, UpdateByIdParams, GetByIdParams, SortQuery } from '../tipitipler/FireBaseStoreTypes';
 
 
-export class MongoDB implements DB {
+export abstract class MongoDB implements DB {
   db: MongoClient = null as unknown as MongoClient; // type script de this ile basliyan degiskenle baslangicta tanimlanmali oyuzden boyle
   dbName: string;
   database: Db = null as unknown as Db;
@@ -88,7 +88,7 @@ export class MongoDB implements DB {
     }
   }
 
-  async WriteADataToDB({ table, data, id }: WriteADataParams): Promise<Boolean> {
+  async WriteADataToDB({ table, data, id }: WriteADataParams): Promise<boolean> {
     try {
       await this.openConnection()
       const collection = this.database.collection(table)
@@ -165,22 +165,22 @@ export class MongoDB implements DB {
     return { $inc: data }
   }
 
-  /**
-   * push verisi doner.
-   * update by id ye data olarak veriemli
-   * @param data push edilecek veri
-   * @returns update data
-   */
-  pushData(data: object): object {
-    return { $push: data }
-  }
 
-  async pullData(colum: string, query: any, table: string) {
+  async pushData(colum: string, query: string, table: string): Promise<boolean> {
     const data: any = {}
-    data[colum] = { $elemMatch: query }
+    data[colum] = query
     await this.openConnection()
     const collection = this.database.collection(table)
-    const { result } = await collection.updateOne({}, { $pull: data })
+    const { result } = await collection.updateOne({}, { $push: data }) // {},{$pull:{colum:equ}}
+    return result.n !== 0
+  }
+
+  async pullData(colum: string, query: string, table: string): Promise<boolean> {
+    const data: any = {}
+    data[colum] = query
+    await this.openConnection()
+    const collection = this.database.collection(table)
+    const { result } = await collection.updateOne({}, { $pull: data }) // {},{$pull:{colum:equ}}
     return result.nModified !== 0
   }
 }

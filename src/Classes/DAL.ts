@@ -1,11 +1,12 @@
 import * as admin from "firebase-admin";
 import { FireBaseStore } from "../Abstract/FireBaseStore";
+import { MongoDB } from '../Abstract/mongoDALClass';
 import { ListRoomsQueryParams, QueryStringObj } from "../tipitipler/Extralar";
 import { SortQuery } from "../tipitipler/FireBaseStoreTypes";
 import { Room, Rooms } from "../tipitipler/Room";
 import { User } from "../tipitipler/User";
 
-class DAL extends FireBaseStore {
+class DAL extends MongoDB {
   tables: { users: string; cards: string; rooms: string };
 
   constructor(connection: any) {
@@ -76,6 +77,9 @@ class DAL extends FireBaseStore {
     const data = {
       cards: admin.firestore.FieldValue.arrayRemove(roomId),
     };
+
+    return this.pullData('cards', {})
+
     return this.UpdateById({
       table: this.tables.users,
       id: userId,
@@ -118,17 +122,15 @@ class DAL extends FireBaseStore {
 
   //#region addLikeOrDislikeRoomById
   private Dislike(id: string): Promise<Room> {
-    const value = admin.firestore.FieldValue.increment(1);
-    const data = { dislike: value };
-    return this.UpdateById({ table: this.tables.rooms, id, data }) as Promise<
+    const value = this.increementData('Dislike', 1);
+    return this.UpdateById({ table: this.tables.rooms, id, data: value }) as Promise<
       Room
     >;
   }
 
   private Like(id: string): Promise<Room> {
-    const value = admin.firestore.FieldValue.increment(1);
-    const data = { like: value };
-    return this.UpdateById({ table: this.tables.rooms, id, data }) as Promise<
+    const value = this.increementData('Like', 1);
+    return this.UpdateById({ table: this.tables.rooms, id, data: value }) as Promise<
       Room
     >;
   }
