@@ -166,21 +166,21 @@ export abstract class MongoDB implements DB {
   }
 
 
-  async pushData(colum: string, query: string, table: string): Promise<boolean> {
+  async pushData(colum: string, query: string, table: string, id: string): Promise<boolean> {
     const data: any = {}
     data[colum] = query
     await this.openConnection()
     const collection = this.database.collection(table)
-    const { result } = await collection.updateOne({}, { $push: data }) // {},{$pull:{colum:equ}}
+    const { result } = await collection.updateOne({ _id: new ObjectId(id) }, { $push: data }) // {},{$pull:{colum:equ}}
     return result.n !== 0
   }
 
-  async pullData(colum: string, query: string, table: string): Promise<boolean> {
+  async pullData(colum: string, query: string, table: string, id: string): Promise<boolean> {
     const data: any = {}
     data[colum] = query
     await this.openConnection()
     const collection = this.database.collection(table)
-    const { result } = await collection.updateOne({}, { $pull: data }) // {},{$pull:{colum:equ}}
+    const { result } = await collection.updateOne({ _id: new ObjectId(id) }, { $pull: data }) // {},{$pull:{colum:equ}}
     return result.nModified !== 0
   }
 }
