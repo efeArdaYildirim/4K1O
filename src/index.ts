@@ -4,7 +4,7 @@ import { json } from 'body-parser'
 
 const app = express();
 
-const sv = new ServerClass('4k1O');
+const sv = new ServerClass('4k1o');
 
 
 
@@ -15,6 +15,20 @@ app.post('/login', async (req, res) => {
   }, null)
   console.log(us)
   res.send(us)
+  return
+})
+
+app.post('/logup', async (req, res) => {
+  const us = await sv.Logup({
+    data: {
+      email: 'efeardayildirim@gmail.com',
+      password: '123'
+    }
+  })
+  console.log(us)
+
+  res.send(us)
+  return
 })
 
 app.listen(3000, () => {

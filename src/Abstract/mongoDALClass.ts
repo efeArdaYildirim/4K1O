@@ -37,7 +37,7 @@ export abstract class MongoDB implements DB {
 
   }
 
-  private MongoQueryFromSingleQuery({ collOfTable, query, mustBeData }: QueryStringObj): object {
+  MongoQueryFromSingleQuery({ collOfTable, query, mustBeData }: QueryStringObj): object {
     const mongoQuery: any = {};
     switch (query) {
       case '==':
@@ -62,11 +62,12 @@ export abstract class MongoDB implements DB {
   }
 
   MongoQueryFromQueryStringObjs(queryArr: QueryStringObj[]): object {
+    if (queryArr.length === 0) return {}
     const MQuery = queryArr.map((q) => {
       return this.MongoQueryFromSingleQuery(q)
     })
     const result: any = {}
-    Object.getOwnPropertyNames(MQuery).forEach((i: any) => {
+    MQuery.forEach((i: any) => {
       for (const j in i) {
         result[j] = i[j]
       }
@@ -79,6 +80,7 @@ export abstract class MongoDB implements DB {
     try {
       const query = this.MongoQueryFromQueryStringObjs(queryArr)
       const sortQuery = this.SortQuery(sort)
+      console.log(query)
       await this.openConnection()
       const collection = this.database.collection(table)
       const cursor = collection.find(query).sort(sortQuery).limit(limit * index).skip(index)

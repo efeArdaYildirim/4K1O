@@ -9,7 +9,7 @@ import { User } from "../tipitipler/User";
 class DAL extends MongoDB {
   tables: { users: string; cards: string; rooms: string };
 
-  constructor(connection: any) {
+  constructor(connection?: any) {
     super(connection);
     this.tables = {
       users: "users",
@@ -55,7 +55,7 @@ class DAL extends MongoDB {
     ];
     return this.Filter({
       table: this.tables.users,
-      queryArr,
+      queryArr: [],
     }).then((res: any[]) => {
       console.log(res);
       return res[0] as User
