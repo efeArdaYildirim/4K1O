@@ -110,6 +110,6 @@
     "trailing-comma": { "severity": "warning" },
     "no-console": true
   },
-
+  "linterOptions": { "exclude": ["lib/"] },
   "defaultSeverity": "error"
 }

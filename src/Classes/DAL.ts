@@ -55,9 +55,8 @@ class DAL extends MongoDB {
     ];
     return this.Filter({
       table: this.tables.users,
-      queryArr: [],
+      queryArr,
     }).then((res: any[]) => {
-      console.log(res);
       return res[0] as User
     });
   }

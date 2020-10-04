@@ -76,14 +76,13 @@ export abstract class MongoDB implements DB {
     return result
   }
 
-  async Filter({ table, queryArr, limit = 50, index = 1, sort = [{ orderBy: 'rank', sortBy: 'asc' }] }: FilterFuncParams): Promise<Object[]> {
+  async Filter({ table, queryArr, limit = 50, index = 0, sort = [{ orderBy: 'rank', sortBy: 'asc' }] }: FilterFuncParams): Promise<Object[]> {
     try {
       const query = this.MongoQueryFromQueryStringObjs(queryArr)
       const sortQuery = this.SortQuery(sort)
-      console.log(query)
       await this.openConnection()
       const collection = this.database.collection(table)
-      const cursor = collection.find(query).sort(sortQuery).limit(limit * index).skip(index)
+      const cursor = collection.find(query).sort(sortQuery).limit(limit * index ? 1 : 0).skip(limit * index)
       return await cursor.toArray()
     } finally {
       await this.close()
