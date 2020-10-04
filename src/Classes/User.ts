@@ -85,13 +85,13 @@ export class UserClass {
   //#endregion updateMe
 
   //#region roomAddToCart
-  RoomAddToCartFromUser(roomId: string): Promise<Room> {
+  RoomAddToCartFromUser(roomId: string): Promise<boolean> {
     return this.db.AddRoomToCardWriteToDB(this.uid, roomId);
   }
   //#endregion roomAddToCart
 
   //#region roomDelToCart
-  RoomDelToCartFromUser(roomId: string): Promise<Room> {
+  RoomDelToCartFromUser(roomId: string): Promise<boolean> {
     return this.db.DelRoomToCardWriteToDB(this.uid, roomId);
   }
   //#endregion roomDelToCart

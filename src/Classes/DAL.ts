@@ -51,12 +51,15 @@ class DAL extends MongoDB {
   SearchUserByEmailAndPasswd(email: string, passwd: string): Promise<User> {
     const queryArr: QueryStringObj[] = [
       { collOfTable: "email", query: "==", mustBeData: email },
-      { collOfTable: "passwd", query: "==", mustBeData: passwd },
+      { collOfTable: "password", query: "==", mustBeData: passwd },
     ];
     return this.Filter({
       table: this.tables.users,
       queryArr,
-    }).then((res: any[]) => res[0] as User);
+    }).then((res: any[]) => {
+      console.log(res);
+      return res[0] as User
+    });
   }
 
   //#endregion searchUserByNameAndPasswd
