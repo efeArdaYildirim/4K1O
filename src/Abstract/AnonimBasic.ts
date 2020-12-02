@@ -1,9 +1,11 @@
-import admin = require("firebase-admin");
-import { DAL } from "../Classes/DAL";
-import { Validator } from "../Classes/Validator";
-import { User } from "../tipitipler/User";
-import { App } from "../Classes/App";
-export class AnonimFirebase {
+import { App } from '../Classes/App';
+import { DAL } from '../Classes/DAL';
+import { Validator } from '../Classes/Validator';
+import { User } from '../tipitipler/User';
+
+export abstract class AnonimBaisic {
+
+
   db: DAL;
   app: App;
   constructor(dal: DAL) {
@@ -43,19 +45,11 @@ export class AnonimFirebase {
     if (!user.landAgent) throw new Error("eksik veri");
     this.app.TurkisIdCheck(user.landAgent);
 
-    const createdUser: admin.auth.UserRecord = await admin.auth().createUser({
-      email: user.email,
-      phoneNumber: user.landAgent.phoneNumber,
-      password: user.password,
-      displayName: user.name,
-      disabled: true,
-    });
-
-    const isCreated = this.db.CreatUserToDB({ data: user, id: createdUser.uid });
+    const isCreated = this.db.CreatUserToDB({ data: user });
 
     if (isCreated) return isCreated;
-    await admin.auth().deleteUser(createdUser.uid);
     return false;
+
     /* // bu kod fire base de calismiyacak
     this.app.sendMailToReciver({
       to: user.email,
@@ -65,4 +59,6 @@ export class AnonimFirebase {
     });
     */
   }
+
+
 }

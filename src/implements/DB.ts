@@ -1,8 +1,11 @@
 import { firestore } from "firebase-admin";
 import {
   DBDataParseReturnType,
+  DelByIdParams,
   FilterFuncParams,
-  WriteAData,
+  GetByIdParams,
+  UpdateByIdParams,
+  WriteADataParams,
 } from "../tipitipler/FireBaseStoreTypes";
 
 interface DB {
@@ -10,23 +13,22 @@ interface DB {
   private DBDataParse(
     dataOfDbResult: any,
     shouldIDo: boolean
-  ): Promise<DBDataParseReturnType>;
-  filter({
+  ): Promise<DBDataParseReturnType>;*/
+
+  Filter({
     table,
     queryArr,
     returnDBQuery,
-  }: FilterFuncParams): Promise<Object[]>;*/
-  writeAData({ table, data, id }: WriteAData): Promise<Boolean>;
-  delById(table: string, id: string): Promise<boolean | Error>;
-  updateById(table: string, id: string, data: any): Promise<Object | Error>;
+  }: FilterFuncParams): Promise<Object[]>;
+  WriteADataToDB({ table, data, id }: WriteADataParams): Promise<Boolean>;
+  DelById({ table, id }: DelByIdParams): Promise<boolean | Error>;
+  UpdateById({ table, id, data }: UpdateByIdParams): Promise<Object | Error>;
 
-  getById(
-    table: string,
-    id: string,
-    returnDBQuery: boolean
-  ): Promise<
-    JSON | Error | firestore.DocumentReference<firestore.DocumentData>
-  >;
+  GetById({
+    table,
+    id,
+    returnDBQuery,
+  }: GetByIdParams): Promise<object | Error>
 }
 
 export { DB };

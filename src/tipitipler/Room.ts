@@ -1,6 +1,6 @@
 type Room = JSON &
   Object & {
-    id: number;
+    id: string;
 
     title: string;
     explain: string;
