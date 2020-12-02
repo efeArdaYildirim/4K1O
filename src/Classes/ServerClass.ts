@@ -17,10 +17,17 @@ export class ServerClass implements ServerI {
     this.user = new UserClass(this.db);
     this.satan = new LandAgent(this.db);
   }
-  Login(data: any, context: any) {
+  async Login(data: any, context: any) {
+    return await this.db.SearchUserByEmailAndPasswd(data.email, data.password)
     throw new Error('Method not implemented.');
   }
   RoomList(data: any, context: any) {
+    return this.db.ListRoomByRankORCityFromDB({
+      index: 0,
+      limit: 50,
+      queryArr: [],
+      sort: []
+    })
     throw new Error('Method not implemented.');
   }
   RoomSearch(data: any, context: any) {
@@ -52,11 +59,11 @@ export class ServerClass implements ServerI {
 
   async Logup({ data, context }: any) {
     try {
-      logger.info("addLandAgent", {
-        arguments: { data: data, context: context.auth },
-      });
-      this.user.setUid = context.auth.uid;
-      this.user.AmIauth();
+      // logger.info("addLandAgent", {
+      // arguments: { data: data, context: context.auth },
+      // });
+      // this.user.setUid = context.auth?.uid;
+      // this.user.AmIauth();
       await this.anon.AddSatan(data);
       return { status: true };
     } catch (err) {

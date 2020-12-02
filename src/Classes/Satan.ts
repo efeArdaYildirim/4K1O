@@ -48,7 +48,7 @@ export class LandAgent extends UserClass {
         this.isItMyRoom(room);
         return this.db.DelRoomById(roomId);
       })
-      .catch((err) => {
+      .catch((err: any) => {
         throw err;
       });
   }

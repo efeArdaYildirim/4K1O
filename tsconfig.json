@@ -61,7 +61,8 @@
     "forceConsistentCasingInFileNames": true /* Disallow inconsistently-cased references to the same file. */
   },
   "include": [
-    "**/*"
+    "**/*",
+    "tests/"
   ],
   "exclude": [
     "node_modules",

@@ -40,10 +40,10 @@ export abstract class AnonimBaisic {
   }
 
   async AddSatan(user: User): Promise<boolean> {
-    this.ValidateBaisicUserData(user);
+    // this.ValidateBaisicUserData(user);
 
-    if (!user.landAgent) throw new Error("eksik veri");
-    this.app.TurkisIdCheck(user.landAgent);
+    // if (!user.landAgent) throw new Error("eksik veri");
+    // this.app.TurkisIdCheck(user.landAgent);
 
     const isCreated = this.db.CreatUserToDB({ data: user });
 

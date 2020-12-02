@@ -37,7 +37,7 @@ export abstract class MongoDB implements DB {
 
   }
 
-  private MongoQueryFromSingleQuery({ collOfTable, query, mustBeData }: QueryStringObj): object {
+  MongoQueryFromSingleQuery({ collOfTable, query, mustBeData }: QueryStringObj): object {
     const mongoQuery: any = {};
     switch (query) {
       case '==':
@@ -62,11 +62,12 @@ export abstract class MongoDB implements DB {
   }
 
   MongoQueryFromQueryStringObjs(queryArr: QueryStringObj[]): object {
+    if (queryArr.length === 0) return {}
     const MQuery = queryArr.map((q) => {
       return this.MongoQueryFromSingleQuery(q)
     })
     const result: any = {}
-    Object.getOwnPropertyNames(MQuery).forEach((i: any) => {
+    MQuery.forEach((i: any) => {
       for (const j in i) {
         result[j] = i[j]
       }
@@ -75,13 +76,13 @@ export abstract class MongoDB implements DB {
     return result
   }
 
-  async Filter({ table, queryArr, limit = 50, index = 1, sort = [{ orderBy: 'rank', sortBy: 'asc' }] }: FilterFuncParams): Promise<Object[]> {
+  async Filter({ table, queryArr, limit = 50, index = 0, sort = [{ orderBy: 'rank', sortBy: 'asc' }] }: FilterFuncParams): Promise<Object[]> {
     try {
       const query = this.MongoQueryFromQueryStringObjs(queryArr)
       const sortQuery = this.SortQuery(sort)
       await this.openConnection()
       const collection = this.database.collection(table)
-      const cursor = collection.find(query).sort(sortQuery).limit(limit * index).skip(index)
+      const cursor = collection.find(query).sort(sortQuery).limit(limit * index ? 1 : 0).skip(limit * index)
       return await cursor.toArray()
     } finally {
       await this.close()
