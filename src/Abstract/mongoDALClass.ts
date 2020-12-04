@@ -76,15 +76,28 @@ export abstract class MongoDB implements DB {
     return result
   }
 
-  async Filter({ table, queryArr, limit = 50, index = 1, sort = [{ orderBy: 'rank', sortBy: 'asc' }] }: FilterFuncParams): Promise<Object[]> {
+  // queriyi filtereleme yazirla google reanslate komplex cu:mle do:ndu:
+  private prepareQuerForFiltering(sort, queryArr) {
+    const query = this.MongoQueryFromQueryStringObjs(queryArr)
+    const sortQuery = this.SortQuery(sort)
+    return [query, sortQuery]
+  }
+
+  private IdsToString(cursorArr) {
+    return cursorArr.map((row) => {
+      row._id = row._id.toString()
+      return row
+    })
+  }
+
+  async Filter({ table, queryArr, limit = 50, index = 0, sort = [{ orderBy: 'rank', sortBy: 'asc' }] }: FilterFuncParams): Promise<Object[]> {
     try {
-      const query = this.MongoQueryFromQueryStringObjs(queryArr)
-      const sortQuery = this.SortQuery(sort)
-      console.log(query)
+      const [query, sortQuery] = this.prepareQuerForFiltering(sort, queryArr)
       await this.openConnection()
       const collection = this.database.collection(table)
-      const cursor = collection.find(query).sort(sortQuery).limit(limit * index).skip(index)
-      return await cursor.toArray()
+      const cursor = collection.find(query).sort(sortQuery).limit(limit * index + 1).skip(index)
+      let result = await cursor.toArray()
+      return this.IdsToString(result)
     } finally {
       await this.close()
     }
@@ -148,6 +161,7 @@ export abstract class MongoDB implements DB {
       const collection = this.database.collection(table)
       const cursor = await collection.findOne({ _id: new ObjectId(id) })
       if (cursor === null) throw new Error('no data')
+      cursor._id = cursor._id.toString()
       return cursor
     } finally {
       await this.close()
@@ -167,16 +181,26 @@ export abstract class MongoDB implements DB {
     return { $inc: data }
   }
 
-
+  /** 
+     * udate iselmi ile listerden veri ekler 
+     * {a:[1,2]}
+     * {a:[1,2,3]}
+    */
   async pushData(colum: string, query: string, table: string, id: string): Promise<boolean> {
     const data: any = {}
     data[colum] = query
     await this.openConnection()
     const collection = this.database.collection(table)
-    const { result } = await collection.updateOne({ _id: new ObjectId(id) }, { $push: data }) // {},{$pull:{colum:equ}}
+    const { result } = await collection.updateOne({ _id: new ObjectId(id) }, { $push: data }) // {},{$push:{colum:equ}}
     return result.n !== 0
   }
 
+
+  /** 
+   * udate iselmi ile listerden veri siler 
+   * {a:[1,2,3]}
+   * {a:[1,2]}
+  */
   async pullData(colum: string, query: string, table: string, id: string): Promise<boolean> {
     const data: any = {}
     data[colum] = query

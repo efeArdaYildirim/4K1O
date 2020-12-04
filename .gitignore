@@ -17,3 +17,5 @@ yarn.lock
 smtpConfig.json
 data/
 .vscode/
+docker/
+package-lock.json
