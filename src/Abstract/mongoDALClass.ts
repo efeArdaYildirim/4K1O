@@ -1,6 +1,6 @@
 import { Cursor, MongoClient, ReplSet, Db, ObjectId } from "mongodb";
 import { DB } from '../implements/DB';
-import { QueryStringObj } from '../tipitipler/Extralar';
+import { QueryStringObj, QueryArr } from '../tipitipler/Extralar';
 import { FilterFuncParams, WriteADataParams, DelByIdParams, UpdateByIdParams, GetByIdParams, SortQuery } from '../tipitipler/FireBaseStoreTypes';
 
 
@@ -61,17 +61,34 @@ export abstract class MongoDB implements DB {
     return mongoQuery
   }
 
-  MongoQueryFromQueryStringObjs(queryArr: QueryStringObj[]): object {
-    if (queryArr.length === 0) return {}
-    const MQuery = queryArr.map((q) => {
+  MongoQueryFromQueryStringObjs(queryArr: QueryArr): object {
+    if (queryArr.and.length === 0 && queryArr.or.length === 0) return {}
+
+    const MQueryAnd = queryArr.and.map((q) => {
       return this.MongoQueryFromSingleQuery(q)
     })
-    const result: any = {}
-    MQuery.forEach((i: any) => {
+    const MQueryOr = queryArr.or.map((q) => {
+      return this.MongoQueryFromSingleQuery(q)
+    })
+    const and: any = {}
+    const or: any = {}
+
+    MQueryOr.forEach((i: any) => {
       for (const j in i) {
-        result[j] = i[j]
+        or[j] = i[j]
       }
     })
+
+    MQueryAnd.forEach((i: any) => {
+      for (const j in i) {
+        and[j] = i[j]
+      }
+    })
+
+    const result = {
+      ...and,
+      $or: MQueryOr
+    }
 
     return result
   }

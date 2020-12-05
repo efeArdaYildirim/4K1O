@@ -19,6 +19,11 @@ type QueryStringObj = {
   mustBeData: string;
 };
 
+type QueryArr = {
+  and: QueryStringObj[],
+  or: QueryStringObj[]
+}
+
 type ListRoomsQueryParams = {
   queryArr: QueryStringObj[];
   index: number;
@@ -35,4 +40,5 @@ export {
   QueryStringObj,
   optStr,
   ListRoomsQueryParams,
+  QueryArr
 };
