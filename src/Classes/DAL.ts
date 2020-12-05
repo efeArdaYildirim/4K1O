@@ -1,7 +1,7 @@
 import * as admin from "firebase-admin";
 import { FireBaseStore } from "../Abstract/FireBaseStore";
 import { MongoDB } from '../Abstract/mongoDALClass';
-import { ListRoomsQueryParams, QueryStringObj } from "../tipitipler/Extralar";
+import { ListRoomsQueryParams, QueryArr, QueryStringObj } from "../tipitipler/Extralar";
 import { SortQuery } from "../tipitipler/FireBaseStoreTypes";
 import { Room, Rooms } from "../tipitipler/Room";
 import { User } from "../tipitipler/User";
@@ -49,13 +49,15 @@ class DAL extends MongoDB {
   //#region searchUserByNameAndPasswd
 
   SearchUserByEmailAndPasswd(email: string, passwd: string): Promise<User> {
-    const queryArr: QueryStringObj[] = [
-      { collOfTable: "email", query: "==", mustBeData: email },
-      { collOfTable: "password", query: "==", mustBeData: passwd },
-    ];
+    const queryArr: QueryArr = {
+      and: [
+        { collOfTable: "email", query: "==", mustBeData: email },
+        { collOfTable: "password", query: "==", mustBeData: passwd },
+      ]
+    };
     return this.Filter({
       table: this.tables.users,
-      queryArr: [],
+      queryArr,
     }).then((res: any[]) => {
       console.log(res);
       return res[0] as User
@@ -152,7 +154,7 @@ class DAL extends MongoDB {
     city,
   }: ListRoomsQueryParams) {
     if (city) {
-      queryArr.push({ collOfTable: "city", query: "==", mustBeData: city });
+      queryArr.and.push({ collOfTable: "city", query: "==", mustBeData: city });
     }
     const sortArray: SortQuery[] = [
       { orderBy: "rank", sortBy: "desc" },
@@ -172,12 +174,14 @@ class DAL extends MongoDB {
   //#region getMyRooms
 
   GetMyRoomsFromDB(id: string): Promise<Rooms> {
-    const query: QueryStringObj[] = [
-      { collOfTable: "owner", query: "==", mustBeData: id },
-    ];
+    const queryArr: QueryArr = {
+      and: [
+        { collOfTable: "owner", query: "==", mustBeData: id },
+      ]
+    };
     return this.Filter({
       table: this.tables.rooms,
-      queryArr: query,
+      queryArr,
     }) as Promise<Rooms>;
   }
 

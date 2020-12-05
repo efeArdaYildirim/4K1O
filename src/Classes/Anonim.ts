@@ -1,6 +1,6 @@
 import { AnonimBaisic } from '../Abstract/AnonimBasic';
 import { AnonimFirebase } from "../Abstract/AnonimFirebase";
-import { QueryStringObj } from "../tipitipler/Extralar";
+import { QueryArr, QueryStringObj } from "../tipitipler/Extralar";
 import { SortQuery } from "../tipitipler/FireBaseStoreTypes";
 import { Room, Rooms } from "../tipitipler/Room";
 import { User } from "../tipitipler/User";
@@ -32,12 +32,13 @@ export class Anonim extends AnonimBaisic {
 
   SearchRoom(
     sort: SortQuery[],
-    queryArr: QueryStringObj[],
+    queryArr: QueryArr,
     city?: string,
     index: number = 0,
     limit: number = 50
   ): Promise<Rooms> {
-    this.RoomSearchQueryValidator(queryArr);
+    this.RoomSearchQueryValidator(queryArr.and);
+    this.RoomSearchQueryValidator(queryArr.or);
     return this.db
       .ListRoomByRankORCityFromDB({ queryArr, sort, limit, index, city })
       .then((rooms: Rooms) => {

@@ -1,4 +1,3 @@
 {
-  "rootDir": "./lib/tests",
-  "watchman": true
+  "rootDir": "./lib/tests"
 }

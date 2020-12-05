@@ -61,34 +61,32 @@ export abstract class MongoDB implements DB {
     return mongoQuery
   }
 
+  private prepareQuery(queryArr: QueryStringObj[]) {
+    if (queryArr == undefined || queryArr.length === 0) return {}
+    return queryArr.map((q) => {
+      return this.MongoQueryFromSingleQuery(q)
+    })
+  }
+
+  private mergeQueryArr(query) {
+    const result: any = {}
+    query.forEach((i: any) => {
+      for (const j in i) {
+        result[j] = i[j]
+      }
+    })
+    return result
+  }
+
   MongoQueryFromQueryStringObjs(queryArr: QueryArr): object {
-    if (queryArr.and.length === 0 && queryArr.or.length === 0) return {}
-
-    const MQueryAnd = queryArr.and.map((q) => {
-      return this.MongoQueryFromSingleQuery(q)
-    })
-    const MQueryOr = queryArr.or.map((q) => {
-      return this.MongoQueryFromSingleQuery(q)
-    })
-    const and: any = {}
-    const or: any = {}
-
-    MQueryOr.forEach((i: any) => {
-      for (const j in i) {
-        or[j] = i[j]
-      }
-    })
-
-    MQueryAnd.forEach((i: any) => {
-      for (const j in i) {
-        and[j] = i[j]
-      }
-    })
+    const andQuery = this.prepareQuery(queryArr.and)
+    const or = this.prepareQuery(queryArr.or)
+    const and = this.mergeQueryArr(andQuery)
 
     const result = {
       ...and,
-      $or: MQueryOr
     }
+    if (Object.getOwnPropertyNames(or).length != 0) result['$or'] = or;
 
     return result
   }

@@ -1,10 +1,10 @@
-import { QueryStringObj } from "./Extralar";
+import { QueryArr, QueryStringObj } from "./Extralar";
 
 export type SortQuery = { orderBy: string; sortBy: "asc" | "desc" };
 
 export type FilterFuncParams = {
   table: string;
-  queryArr: QueryStringObj[];
+  queryArr: QueryArr;
   limit?: number;
   index?: number;
   sort?: SortQuery[];

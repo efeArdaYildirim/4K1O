@@ -20,12 +20,12 @@ type QueryStringObj = {
 };
 
 type QueryArr = {
-  and: QueryStringObj[],
-  or: QueryStringObj[]
+  and?: QueryStringObj[],
+  or?: QueryStringObj[]
 }
 
 type ListRoomsQueryParams = {
-  queryArr: QueryStringObj[];
+  queryArr: QueryArr;
   index: number;
   sort: SortQuery[];
   limit: number;

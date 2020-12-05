@@ -26,7 +26,7 @@ export class ServerClass implements ServerI {
     return this.db.ListRoomByRankORCityFromDB({
       index: 0,
       limit: 50,
-      queryArr: [],
+      queryArr: {},
       sort: []
     })
     throw new Error('Method not implemented.');

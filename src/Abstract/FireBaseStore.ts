@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { firestore } from "firebase-admin";
 import * as functions from "firebase-functions";
 import {
