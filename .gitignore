@@ -19,3 +19,4 @@ data/
 .vscode/
 docker/
 package-lock.json
+*drawio

@@ -68,7 +68,7 @@ class DAL extends MongoDB {
 
   //#region addRoomToCard
   AddRoomToCardWriteToDB(userId: string, roomId: string): Promise<boolean> {
-    return this.pushData('cards', roomId, this.tables.users, userId)
+    return this.pushData('cards', roomId, this.tables.cards, userId)
 
 
   }
@@ -76,7 +76,7 @@ class DAL extends MongoDB {
 
   //#region delRoomToCard
   DelRoomToCardWriteToDB(userId: string, roomId: string): Promise<boolean> {
-    return this.pullData('cards', roomId, this.tables.users, userId)
+    return this.pullData('cards', roomId, this.tables.cards, userId)
 
   }
   //#endregion delRoomToCard

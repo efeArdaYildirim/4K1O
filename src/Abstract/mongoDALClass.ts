@@ -22,7 +22,7 @@ export abstract class MongoDB implements DB {
     }
   }
 
-  private async openConnection(): Promise<void> {
+  async openConnection(): Promise<void> {
     this.db = new MongoClient(this.connection, { poolSize: 20, useUnifiedTopology: true })
     await this.db.connect();
     this.database = this.db.db(this.dbName)
@@ -62,13 +62,14 @@ export abstract class MongoDB implements DB {
   }
 
   private prepareQuery(queryArr: QueryStringObj[]) {
-    if (queryArr == undefined || queryArr.length === 0) return {}
+    if (queryArr == undefined || queryArr.length === 0) return []
     return queryArr.map((q) => {
       return this.MongoQueryFromSingleQuery(q)
     })
   }
 
   private mergeQueryArr(query) {
+    // if (query.length == 0) return null
     const result: any = {}
     query.forEach((i: any) => {
       for (const j in i) {
@@ -79,15 +80,14 @@ export abstract class MongoDB implements DB {
   }
 
   MongoQueryFromQueryStringObjs(queryArr: QueryArr): object {
-    const andQuery = this.prepareQuery(queryArr.and)
-    const or = this.prepareQuery(queryArr.or)
-    const and = this.mergeQueryArr(andQuery)
+    const andQuery = queryArr.and && this.prepareQuery(queryArr.and) || null
+    const or = queryArr.or && this.prepareQuery(queryArr.or) || null
+    let and = andQuery && this.mergeQueryArr(andQuery);
 
     const result = {
       ...and,
     }
-    if (Object.getOwnPropertyNames(or).length != 0) result['$or'] = or;
-
+    if (or != null) result['$or'] = or;
     return result
   }
 
@@ -110,7 +110,7 @@ export abstract class MongoDB implements DB {
       const [query, sortQuery] = this.prepareQuerForFiltering(sort, queryArr)
       await this.openConnection()
       const collection = this.database.collection(table)
-      const cursor = collection.find(query).sort(sortQuery).limit(limit * index + 1).skip(index)
+      const cursor = collection.find(query).sort(sortQuery).limit(limit * (index + 1)).skip(index)
       let result = await cursor.toArray()
       return this.IdsToString(result)
     } finally {
@@ -123,7 +123,7 @@ export abstract class MongoDB implements DB {
       await this.openConnection()
       const collection = this.database.collection(table)
       const q: any = {}
-      if (id) q['_id'] = id
+      if (id) q['_id'] = new ObjectId(id)
       const { result } = await collection.insertOne({
         ...q, ...data, createdTime: new Date().toISOString()
 
@@ -144,17 +144,16 @@ export abstract class MongoDB implements DB {
     } finally {
       await this.close()
     }
-
   }
 
-  private isUpdateData(data: object) {
+  setUpdateData(data: object) {
     if (Object.getOwnPropertyNames(data)[0][0] !== '$') return { $set: data }
     return data
   }
 
   async UpdateById({ table, id, data }: UpdateByIdParams): Promise<Object | Error> {
     try {
-      const update = this.isUpdateData(data);
+      const update = this.setUpdateData(data);
       await this.openConnection()
       const collection = this.database.collection(table)
       const { result } = await collection.updateOne({ _id: new ObjectId(id) }, {
@@ -201,7 +200,7 @@ export abstract class MongoDB implements DB {
      * {a:[1,2]}
      * {a:[1,2,3]}
     */
-  async pushData(colum: string, query: string, table: string, id: string): Promise<boolean> {
+  async pushData(colum: string, query: string | number, table: string, id: string): Promise<boolean> {
     const data: any = {}
     data[colum] = query
     await this.openConnection()
@@ -216,7 +215,7 @@ export abstract class MongoDB implements DB {
    * {a:[1,2,3]}
    * {a:[1,2]}
   */
-  async pullData(colum: string, query: string, table: string, id: string): Promise<boolean> {
+  async pullData(colum: string, query: string | number, table: string, id: string): Promise<boolean> {
     const data: any = {}
     data[colum] = query
     await this.openConnection()
