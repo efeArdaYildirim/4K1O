@@ -37,23 +37,23 @@ export abstract class MongoDB implements DB {
 
   }
 
-  MongoQueryFromSingleQuery({ collOfTable, query, mustBeData }: QueryStringObj): object {
+  MongoQueryFromSingleQuery({ colonOfTable, query, mustBeData }: QueryStringObj): object {
     const mongoQuery: any = {};
     switch (query) {
       case '==':
-        mongoQuery[collOfTable] = mustBeData
+        mongoQuery[colonOfTable] = mustBeData
         break
       case '<':
-        mongoQuery[collOfTable] = { $lt: mustBeData }
+        mongoQuery[colonOfTable] = { $lt: mustBeData }
         break;
       case '<=':
-        mongoQuery[collOfTable] = { $lte: mustBeData }
+        mongoQuery[colonOfTable] = { $lte: mustBeData }
         break;
       case '>':
-        mongoQuery[collOfTable] = { $gt: mustBeData }
+        mongoQuery[colonOfTable] = { $gt: mustBeData }
         break;
       case '>=':
-        mongoQuery[collOfTable] = { $gte: mustBeData }
+        mongoQuery[colonOfTable] = { $gte: mustBeData }
         break
       default:
         throw new Error('bu query degil')
@@ -61,14 +61,14 @@ export abstract class MongoDB implements DB {
     return mongoQuery
   }
 
-  private prepareQuery(queryArr: QueryStringObj[]) {
+  private PrepareQuery(queryArr: QueryStringObj[]) {
     if (queryArr == undefined || queryArr.length === 0) return []
     return queryArr.map((q) => {
       return this.MongoQueryFromSingleQuery(q)
     })
   }
 
-  private mergeQueryArr(query) {
+  private MergeQueryArr(query) {
     // if (query.length == 0) return null
     const result: any = {}
     query.forEach((i: any) => {
@@ -80,9 +80,9 @@ export abstract class MongoDB implements DB {
   }
 
   MongoQueryFromQueryStringObjs(queryArr: QueryArr): object {
-    const andQuery = queryArr.and && this.prepareQuery(queryArr.and) || null
-    const or = queryArr.or && this.prepareQuery(queryArr.or) || null
-    let and = andQuery && this.mergeQueryArr(andQuery);
+    const andQuery = queryArr.and && this.PrepareQuery(queryArr.and) || null
+    const or = queryArr.or && this.PrepareQuery(queryArr.or) || null
+    let and = andQuery && this.MergeQueryArr(andQuery);
 
     const result = {
       ...and,
@@ -92,7 +92,7 @@ export abstract class MongoDB implements DB {
   }
 
   // queriyi filtereleme yazirla google reanslate komplex cu:mle do:ndu:
-  private prepareQuerForFiltering(sort, queryArr) {
+  private PrepareQuerForFiltering(sort, queryArr) {
     const query = this.MongoQueryFromQueryStringObjs(queryArr)
     const sortQuery = this.SortQuery(sort)
     return [query, sortQuery]
@@ -107,7 +107,7 @@ export abstract class MongoDB implements DB {
 
   async Filter({ table, queryArr, limit = 50, index = 0, sort = [{ orderBy: 'rank', sortBy: 'asc' }] }: FilterFuncParams): Promise<Object[]> {
     try {
-      const [query, sortQuery] = this.prepareQuerForFiltering(sort, queryArr)
+      const [query, sortQuery] = this.PrepareQuerForFiltering(sort, queryArr)
       await this.openConnection()
       const collection = this.database.collection(table)
       const cursor = collection.find(query).sort(sortQuery).limit(limit * (index + 1)).skip(index)
@@ -125,7 +125,7 @@ export abstract class MongoDB implements DB {
       const q: any = {}
       if (id) q['_id'] = new ObjectId(id)
       const { result } = await collection.insertOne({
-        ...q, ...data, createdTime: new Date().toISOString()
+        ...q, ...data, /*createdTime: new Date().toISOString()*/
 
       })
       return result.ok === 1
@@ -185,13 +185,13 @@ export abstract class MongoDB implements DB {
   /**
    * artirmaa verisi doner.
    * bunun update by id ye data seklinde verilmesi lazim.
-   * @param coll verisi degisecek sutun
+   * @param colon verisi degisecek sutun
    * @param inc pozitif yada negtif sayi
    * @retrun update data
    */
-  increementData(coll: string, inc: number): object {
+  increementData(colon: string, inc: number): object {
     const data: any = {}
-    data[coll] = inc
+    data[colon] = inc
     return { $inc: data }
   }
 

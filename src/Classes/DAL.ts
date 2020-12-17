@@ -33,6 +33,10 @@ class DAL extends MongoDB {
   //#endregion createUser
 
   //#region delUserById
+  /**
+   * ! card larida silmeli 
+   * ! melakcinin evlerinide ve fotoraflari  
+   */
   DelUserById(id: string): Promise<boolean | Error> {
     return this.DelById({ table: this.tables.users, id });
   }
@@ -51,8 +55,8 @@ class DAL extends MongoDB {
   SearchUserByEmailAndPasswd(email: string, passwd: string): Promise<User> {
     const queryArr: QueryArr = {
       and: [
-        { collOfTable: "email", query: "==", mustBeData: email },
-        { collOfTable: "password", query: "==", mustBeData: passwd },
+        { colonOfTable: "email", query: "==", mustBeData: email },
+        { colonOfTable: "password", query: "==", mustBeData: passwd },
       ]
     };
     return this.Filter({
@@ -154,7 +158,7 @@ class DAL extends MongoDB {
     city,
   }: ListRoomsQueryParams) {
     if (city) {
-      queryArr.and.push({ collOfTable: "city", query: "==", mustBeData: city });
+      queryArr.and.push({ colonOfTable: "city", query: "==", mustBeData: city });
     }
     const sortArray: SortQuery[] = [
       { orderBy: "rank", sortBy: "desc" },
@@ -176,7 +180,7 @@ class DAL extends MongoDB {
   GetMyRoomsFromDB(id: string): Promise<Rooms> {
     const queryArr: QueryArr = {
       and: [
-        { collOfTable: "owner", query: "==", mustBeData: id },
+        { colonOfTable: "owner", query: "==", mustBeData: id },
       ]
     };
     return this.Filter({

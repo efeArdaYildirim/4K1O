@@ -14,7 +14,7 @@ type JsonIterator<T> = {
 type optStr = "<" | "<=" | "==" | ">" | ">=";
 
 type QueryStringObj = {
-  collOfTable: string;
+  colonOfTable: string;
   query: optStr;
   mustBeData: string | number;
 };

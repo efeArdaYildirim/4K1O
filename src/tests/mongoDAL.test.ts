@@ -100,10 +100,10 @@ test('filter', async () => {
   const result = await db.Filter({
     table: "rooms", queryArr:
     {
-      and: [{ collOfTable: "owner", query: "==", mustBeData: 1 }],
+      and: [{ colonOfTable: "owner", query: "==", mustBeData: 1 }],
       or: [
-        { collOfTable: "price", query: "==", mustBeData: 10_000 },
-        { collOfTable: 'm2', query: '<', mustBeData: 10 }
+        { colonOfTable: "price", query: "==", mustBeData: 10_000 },
+        { colonOfTable: 'm2', query: '<', mustBeData: 10 }
       ]
     }
   })
@@ -113,10 +113,10 @@ test('filter', async () => {
 test('Mongo query str', () => {
 
   const result = db.MongoQueryFromQueryStringObjs({
-    and: [{ collOfTable: 'name', query: '==', mustBeData: 'efe' }],
+    and: [{ colonOfTable: 'name', query: '==', mustBeData: 'efe' }],
     or: [
-      { collOfTable: "age", query: '<', mustBeData: 30 },
-      { collOfTable: 'surname', query: '==', mustBeData: 'yildirim' }
+      { colonOfTable: "age", query: '<', mustBeData: 30 },
+      { colonOfTable: 'surname', query: '==', mustBeData: 'yildirim' }
     ]
   })
 
@@ -184,7 +184,7 @@ test('push data', async () => {
     table: "cards", queryArr:
     {
       and: [
-        { collOfTable: 'owner', query: '==', mustBeData: new ObjectId('5fcbf7be4f5cd1517c99cb5c') }
+        { colonOfTable: 'owner', query: '==', mustBeData: new ObjectId('5fcbf7be4f5cd1517c99cb5c') }
       ]
     }
   })
@@ -201,7 +201,7 @@ test('pull data', async () => {
     table: "cards", queryArr:
     {
       and: [
-        { collOfTable: 'owner', query: '==', mustBeData: new ObjectId('5fcbf7be4f5cd1517c99cb5c') }
+        { colonOfTable: 'owner', query: '==', mustBeData: new ObjectId('5fcbf7be4f5cd1517c99cb5c') }
       ]
     }
   })

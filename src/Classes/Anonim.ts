@@ -16,9 +16,9 @@ export class Anonim extends AnonimBaisic {
 
   private RoomSearchQueryValidator(queryArr: QueryStringObj[]) {
     new Validator(queryArr)
-      .ItIsshouldToBeThere(["collOfTable", "query", "mustBeData"])
-      .MaxLength("collOfTable", 64)
-      .MinLength("collOfTable", 2)
+      .ItIsshouldToBeThere(["colonOfTable", "query", "mustBeData"])
+      .MaxLength("colonOfTable", 64)
+      .MinLength("colonOfTable", 2)
       .MaxLength("query", 2)
       .MinLength("query", 1)
       .MinLength("mustBeData", 2)
