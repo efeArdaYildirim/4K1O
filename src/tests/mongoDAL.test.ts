@@ -84,7 +84,7 @@ const data = {
 
 afterAll(async (done) => {
   try {
-    await db.close()
+    await db.Close()
     done()
   } catch (err) {
     console.log('zaten kapali')
@@ -145,16 +145,16 @@ test('write a data to db', () => {
 })
 
 test('inc data', () => {
-  const result = db.increementData('m2', 15)
+  const result = db.IncreementData('m2', 15)
   expect(result).toStrictEqual({ '$inc': { m2: 15 } })
 })
 
 test('update', async () => {
-  const inc = db.increementData('m2', 15)
+  const inc = db.IncreementData('m2', 15)
   const result = await db.UpdateById({
     table: 'rooms',
     id: '5fcc51e3f02fe1b97d2ee1d7',
-    data: { ...db.setUpdateData({ title: 'merkez gobek' }), ...inc }
+    data: { ...db.SetUpdateData({ title: 'merkez gobek' }), ...inc }
   })
 
   const data = await db.GetById({ table: 'rooms', id: '5fcc51e3f02fe1b97d2ee1d7' })
@@ -189,7 +189,7 @@ test('push data', async () => {
     }
   })
   const { _id } = cardres[0]
-  const result = await db.pushData('rooms', 3, 'cards', _id)
+  const result = await db.PushData('rooms', 3, 'cards', _id)
   const newcard = await db.GetById({ table: 'cards', id: _id })
   newcard.owner = newcard.owner + ''
   expect(result).toBeTruthy()
@@ -206,7 +206,7 @@ test('pull data', async () => {
     }
   })
   const { _id } = cardres[0]
-  const result = await db.pullData('rooms', 3, 'cards', _id)
+  const result = await db.PullData('rooms', 3, 'cards', _id)
   const newcard = await db.GetById({ table: 'cards', id: _id })
   newcard.owner = newcard.owner + ''
   expect(result).toBeTruthy()

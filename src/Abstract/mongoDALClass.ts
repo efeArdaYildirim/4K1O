@@ -14,7 +14,7 @@ export abstract class MongoDB implements DB {
     this.dbName = name
   }
 
-  async close(): Promise<void> {
+  async Close(): Promise<void> {
     try {
       await this.db.close()
     } catch (error) {
@@ -22,7 +22,7 @@ export abstract class MongoDB implements DB {
     }
   }
 
-  async openConnection(): Promise<void> {
+  async OpenConnection(): Promise<void> {
     this.db = new MongoClient(this.connection, { poolSize: 20, useUnifiedTopology: true })
     await this.db.connect();
     this.database = this.db.db(this.dbName)
@@ -108,53 +108,52 @@ export abstract class MongoDB implements DB {
   async Filter({ table, queryArr, limit = 50, index = 0, sort = [{ orderBy: 'rank', sortBy: 'asc' }] }: FilterFuncParams): Promise<Object[]> {
     try {
       const [query, sortQuery] = this.PrepareQuerForFiltering(sort, queryArr)
-      await this.openConnection()
+      await this.OpenConnection()
       const collection = this.database.collection(table)
       const cursor = collection.find(query).sort(sortQuery).limit(limit * (index + 1)).skip(index)
       let result = await cursor.toArray()
       return this.IdsToString(result)
     } finally {
-      await this.close()
+      await this.Close()
     }
   }
 
   async WriteADataToDB({ table, data, id }: WriteADataParams): Promise<boolean> {
     try {
-      await this.openConnection()
+      await this.OpenConnection()
       const collection = this.database.collection(table)
       const q: any = {}
       if (id) q['_id'] = new ObjectId(id)
       const { result } = await collection.insertOne({
-        ...q, ...data, /*createdTime: new Date().toISOString()*/
-
+        ...q, ...data,
       })
       return result.ok === 1
     } finally {
-      await this.close()
+      await this.Close()
     }
   }
 
   async DelById({ table, id }: DelByIdParams): Promise<boolean | Error> {
     try {
-      await this.openConnection()
+      await this.OpenConnection()
       const collection = this.database.collection(table)
       const { result } = await collection.deleteOne({ "_id": new ObjectId(id) })
       if (result.n === 0) throw new Error('no data')
       return result.ok === 1
     } finally {
-      await this.close()
+      await this.Close()
     }
   }
 
-  setUpdateData(data: object) {
+  SetUpdateData(data: object) {
     if (Object.getOwnPropertyNames(data)[0][0] !== '$') return { $set: data }
     return data
   }
 
   async UpdateById({ table, id, data }: UpdateByIdParams): Promise<Object | Error> {
     try {
-      const update = this.setUpdateData(data);
-      await this.openConnection()
+      const update = this.SetUpdateData(data);
+      await this.OpenConnection()
       const collection = this.database.collection(table)
       const { result } = await collection.updateOne({ _id: new ObjectId(id) }, {
         ...update,
@@ -165,20 +164,20 @@ export abstract class MongoDB implements DB {
       if (result.nModified === 0) throw new Error('no data')
       return result.ok === 1
     } finally {
-      await this.close()
+      await this.Close()
     }
   }
 
   async GetById({ table, id }: GetByIdParams): Promise<object | Error> {
     try {
-      await this.openConnection()
+      await this.OpenConnection()
       const collection = this.database.collection(table)
       const cursor = await collection.findOne({ _id: new ObjectId(id) })
       if (cursor === null) throw new Error('no data')
       cursor._id = cursor._id.toString()
       return cursor
     } finally {
-      await this.close()
+      await this.Close()
     }
 
   }
@@ -189,7 +188,7 @@ export abstract class MongoDB implements DB {
    * @param inc pozitif yada negtif sayi
    * @retrun update data
    */
-  increementData(colon: string, inc: number): object {
+  IncreementData(colon: string, inc: number): object {
     const data: any = {}
     data[colon] = inc
     return { $inc: data }
@@ -200,12 +199,12 @@ export abstract class MongoDB implements DB {
      * {a:[1,2]}
      * {a:[1,2,3]}
     */
-  async pushData(colum: string, query: string | number, table: string, id: string): Promise<boolean> {
-    const data: any = {}
-    data[colum] = query
-    await this.openConnection()
+  async PushData(colon: string, data: string | number, table: string, id: string): Promise<boolean> {
+    const query: any = {}
+    query[colon] = data
+    await this.OpenConnection()
     const collection = this.database.collection(table)
-    const { result } = await collection.updateOne({ _id: new ObjectId(id) }, { $push: data }) // {},{$push:{colum:equ}}
+    const { result } = await collection.updateOne({ _id: new ObjectId(id) }, { $push: query }) // {},{$push:{colon:equ}}
     return result.n !== 0
   }
 
@@ -215,12 +214,12 @@ export abstract class MongoDB implements DB {
    * {a:[1,2,3]}
    * {a:[1,2]}
   */
-  async pullData(colum: string, query: string | number, table: string, id: string): Promise<boolean> {
-    const data: any = {}
-    data[colum] = query
-    await this.openConnection()
+  async PullData(colon: string, data: string | number, table: string, id: string): Promise<boolean> {
+    const query: any = {}
+    query[colon] = data
+    await this.OpenConnection()
     const collection = this.database.collection(table)
-    const { result } = await collection.updateOne({ _id: new ObjectId(id) }, { $pull: data }) // {},{$pull:{colum:equ}}
+    const { result } = await collection.updateOne({ _id: new ObjectId(id) }, { $pull: query }) // {},{$pull:{colon:equ}}
     return result.nModified !== 0
   }
 }
