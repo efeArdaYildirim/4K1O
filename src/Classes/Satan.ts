@@ -53,7 +53,7 @@ export class LandAgent extends UserClass {
       });
   }
 
-  UpdateMyRoom(roomId: string, updateRoomData: Room): Promise<Room> {
+  UpdateMyRoom(roomId: string, updateRoomData: Room): Promise<boolean> {
     this.RoomDataValidator(updateRoomData);
     new Validator(updateRoomData).ItIsshouldNotToBeThere(["owner"]);
     return this.db.GetRoomById(roomId).then((room: Room) => {

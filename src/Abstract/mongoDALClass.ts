@@ -112,7 +112,7 @@ export abstract class MongoDB implements DB {
       const collection = this.database.collection(table)
       const cursor = collection.find(query).sort(sortQuery).limit(limit * (index + 1)).skip(index)
       let result = await cursor.toArray()
-      return this.IdsToString(result)
+      return await this.IdsToString(result)
     } finally {
       await this.Close()
     }
@@ -123,7 +123,7 @@ export abstract class MongoDB implements DB {
       await this.OpenConnection()
       const collection = this.database.collection(table)
       const q: any = {}
-      if (id) q['_id'] = new ObjectId(id)
+      if (typeof id == 'string') q['_id'] = new ObjectId(id)
       const { result } = await collection.insertOne({
         ...q, ...data,
       })
@@ -139,7 +139,7 @@ export abstract class MongoDB implements DB {
       const collection = this.database.collection(table)
       const { result } = await collection.deleteOne({ "_id": new ObjectId(id) })
       if (result.n === 0) throw new Error('no data')
-      return result.ok === 1
+      return result.ok === 1 && result.n > 0
     } finally {
       await this.Close()
     }
@@ -150,7 +150,7 @@ export abstract class MongoDB implements DB {
     return data
   }
 
-  async UpdateById({ table, id, data }: UpdateByIdParams): Promise<Object | Error> {
+  async UpdateById({ table, id, data }: UpdateByIdParams): Promise<boolean> {
     try {
       const update = this.SetUpdateData(data);
       await this.OpenConnection()
@@ -200,12 +200,17 @@ export abstract class MongoDB implements DB {
      * {a:[1,2,3]}
     */
   async PushData(colon: string, data: string | number, table: string, id: string): Promise<boolean> {
-    const query: any = {}
-    query[colon] = data
-    await this.OpenConnection()
-    const collection = this.database.collection(table)
-    const { result } = await collection.updateOne({ _id: new ObjectId(id) }, { $push: query }) // {},{$push:{colon:equ}}
-    return result.n !== 0
+    try {
+
+      const query: any = {}
+      query[colon] = data
+      await this.OpenConnection()
+      const collection = this.database.collection(table)
+      const { result } = await collection.updateOne({ _id: new ObjectId(id) }, { $push: query }) // {},{$push:{colon:equ}}
+      return result.n !== 0
+    } finally {
+      this.Close()
+    }
   }
 
 
@@ -215,11 +220,16 @@ export abstract class MongoDB implements DB {
    * {a:[1,2]}
   */
   async PullData(colon: string, data: string | number, table: string, id: string): Promise<boolean> {
-    const query: any = {}
-    query[colon] = data
-    await this.OpenConnection()
-    const collection = this.database.collection(table)
-    const { result } = await collection.updateOne({ _id: new ObjectId(id) }, { $pull: query }) // {},{$pull:{colon:equ}}
-    return result.nModified !== 0
+    try {
+
+      const query: any = {}
+      query[colon] = data
+      await this.OpenConnection()
+      const collection = this.database.collection(table)
+      const { result } = await collection.updateOne({ _id: new ObjectId(id) }, { $pull: query }) // {},{$pull:{colon:equ}}
+      return result.nModified !== 0
+    } finally {
+      this.Close()
+    }
   }
 }

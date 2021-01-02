@@ -2,90 +2,21 @@
 import { ObjectId } from "mongodb"
 import { DAL } from "../Classes/DAL"
 import { QueryArr, QueryStringObj } from "../tipitipler/Extralar"
-
-const db = new DAL('4k10')
-
-let tables = ['users', 'cards', 'rooms']
-const data = {
-  users: [{
-    email: 'efeardayildirim@gmail.com',
-    passwd: 'qazxsw',
-    name: 'Efe Arda Yildirim',
-    rank: 1,
-    _id: '5fcbf7be4f5cd1517c99cb5c',
-    yearOfBirdth: 2000,
-    isLandAgent: true,
-    disabled: false,
-    landAgent: {
-      turkisIdNumber: '100000381',
-      firstName: 'Efe Arda',
-      lastName: 'Yildirim',
-      phoneNumber: '05425123000'
-    }
-  },
-  {
-    email: 'ayse@gmai.com',
-    passwd: 'qwert',
-    name: 'Ayse',
-    _id: '5fcbf7be4f5cd1517c99cb5d',
-    rank: 2,
-    yearOfBirdth: 1999,
-    isLandAgent: false,
-    disabled: false,
-  }],
-  cards: [
-    {
-      owner: '5fcbf7be4f5cd1517c99cb5d',
-      rooms: [3, 4, 6]
-    },
-    {
-      owner: '5fcbf7be4f5cd1517c99cb5c',
-      rooms: [5]
-    }],
-  rooms: [
-    {
-      _id: '5fcbf7be4f5cd1517c99cb60',
-      title: 'instanbulun gobegi',
-      owner: 1,
-      isActive: true,
-      price: 10_000,
-      rank: 2,
-      m2: 30
-    },
-    {
-      _id: '5fcbf7be4f5cd1517c99cb61',
-      title: 'adana gobegi',
-      owner: 1,
-      isActive: true,
-      price: 5,
-      rank: 2,
-      m2: 30
-    },
-    {
-      _id: '5fcbf7be4f5cd1517c99cb62',
-      title: 'mersin gobegi',
-      owner: 1,
-      isActive: true,
-      price: 10,
-      rank: 2,
-      m2: 5
-    },
-    {
-      _id: '5fcbf7be4f5cd1517c99cb63',
-      title: 'ankar gobegi',
-      owner: 1,
-      isActive: true,
-      price: 10_00,
-      rank: 2,
-      m2: 30
-    },
-  ]
-}
+import { data, tables, db } from './data'
 
 test('get user by id', async () => {
   const result = await db.GetUserById(data.users[0]._id)
   delete data.createdTime;
   expect(result).toStrictEqual(data.users[0])
+})
+
+test("update user by id", async () => {
+  const result = await db.UpdateUserById(data.users[0]._id, { name: 'e' })
+  expect(result).toBeTruthy()
+  const check = await db.GetUserById(data.users[0]._id)
+  delete check.lastModified
+  expect(check).toStrictEqual({ ...data.users[0], name: 'e' })
+
 })
 
 test('del user by Id', async () => {
@@ -98,4 +29,41 @@ test('create user To db', async () => {
   delete user._id
   const result = await db.CreatUserToDB({ data: user, id: data.users[0]._id })
   expect(result).toBeTruthy()
+})
+
+test("search user by email and passwd", async () => {
+  const result = await db.SearchUserByEmailAndPasswd(data.users[0].email, data.users[0].passwd)
+  expect(result).toStrictEqual(data.users[0])
+})
+
+test("add room to card", async () => {
+  const result = await db.AddRoomToCardWriteToDB(data.users[0]._id, data.rooms[0]._id)
+  expect(result).toBeTruthy()
+})
+
+
+test("del room to card", async () => {
+  const result = await db.DelRoomToCardWriteToDB(data.users[0]._id, data.rooms[0]._id)
+  expect(result).toBeTruthy()
+})
+
+test("get room by id", async () => {
+  const result = await db.GetRoomById(data.rooms[0]._id)
+  expect(result).toStrictEqual(data.rooms[0])
+})
+
+test("del room by id", async () => {
+  const result = await db.DelRoomById(data.rooms[0]._id)
+  expect(result).toBeTruthy()
+  // expect(await db.GetRoomById(data.rooms[0]._id)).toThrow(new Error("no data"))
+
+})
+
+
+test("create room to db", async () => {
+  const { _id: id, ...room } = data.rooms[0];
+  const result = await db.CreateRoomToDB(room, id)
+  expect(result).toBeTruthy()
+  const check = await db.GetRoomById(id)
+  expect(check).toStrictEqual(data.rooms[0])
 })

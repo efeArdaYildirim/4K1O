@@ -1,4 +1,6 @@
 import * as admin from "firebase-admin";
+import { user } from "firebase-functions/lib/providers/auth";
+import { ObjectId } from "mongodb";
 import { FireBaseStore } from "../Abstract/FireBaseStore";
 import { MongoDB } from '../Abstract/mongoDALClass';
 import { ListRoomsQueryParams, QueryArr, QueryStringObj } from "../tipitipler/Extralar";
@@ -35,7 +37,7 @@ class DAL extends MongoDB {
   //#region delUserById
   /**
    * ! card larida silmeli 
-   * ! melakcinin evlerinide ve fotoraflari  
+   * ! emlakcinin evleride ve fotoraflari  
    */
   DelUserById(id: string): Promise<boolean | Error> {
     return this.DelById({ table: this.tables.users, id });
@@ -43,10 +45,8 @@ class DAL extends MongoDB {
   //#endregion delUserById
 
   //#region updateUserById
-  UpdateUserById(id: string, data: JSON): Promise<User> {
-    return this.UpdateById({ table: this.tables.users, id, data }) as Promise<
-      User
-    >;
+  UpdateUserById(id: string, data: JSON): Promise<boolean> {
+    return this.UpdateById({ table: this.tables.users, id, data })
   }
   //#endregion updateUserById
 
@@ -56,14 +56,13 @@ class DAL extends MongoDB {
     const queryArr: QueryArr = {
       and: [
         { colonOfTable: "email", query: "==", mustBeData: email },
-        { colonOfTable: "password", query: "==", mustBeData: passwd },
+        { colonOfTable: "passwd", query: "==", mustBeData: passwd },
       ]
     };
     return this.Filter({
       table: this.tables.users,
       queryArr,
     }).then((res: any[]) => {
-      console.log(res);
       return res[0] as User
     });
   }
@@ -71,16 +70,16 @@ class DAL extends MongoDB {
   //#endregion searchUserByNameAndPasswd
 
   //#region addRoomToCard
-  AddRoomToCardWriteToDB(userId: string, roomId: string): Promise<boolean> {
-    return this.PushData('cards', roomId, this.tables.cards, userId)
-
-
+  async AddRoomToCardWriteToDB(userId: string, roomId: string): Promise<boolean> {
+    const cardId = await this.Filter({ table: this.tables.cards, queryArr: { and: [{ colonOfTable: 'owner', query: "==", mustBeData: new ObjectId(userId) }] } }) as Room[]
+    return this.PushData('rooms', roomId, this.tables.cards, cardId[0]._id)
   }
   //#endregion addRoomToCard
 
   //#region delRoomToCard
-  DelRoomToCardWriteToDB(userId: string, roomId: string): Promise<boolean> {
-    return this.PullData('cards', roomId, this.tables.cards, userId)
+  async DelRoomToCardWriteToDB(userId: string, roomId: string): Promise<boolean> {
+    const cardId = await this.Filter({ table: this.tables.cards, queryArr: { and: [{ colonOfTable: 'owner', query: "==", mustBeData: new ObjectId(userId) }] } }) as Room[]
+    return this.PullData('rooms', roomId, this.tables.cards, cardId[0]._id)
 
   }
   //#endregion delRoomToCard
@@ -96,8 +95,8 @@ class DAL extends MongoDB {
   //#endregion getRoomById
 
   //#region createRoom
-  CreateRoomToDB(data: Room): Promise<boolean> {
-    return this.WriteADataToDB({ table: this.tables.rooms, data });
+  CreateRoomToDB(data: Room, id?: string): Promise<boolean> {
+    return this.WriteADataToDB({ table: this.tables.rooms, data, id: id });
   }
   //#endregion createRoom
 
@@ -108,31 +107,27 @@ class DAL extends MongoDB {
   //#endregion delRoomById
 
   //#region hideRoomById
-  HideRoomById(id: string, hide: boolean): Promise<Room> {
+  HideRoomById(id: string, hide: boolean): Promise<boolean> {
     return this.UpdateById({
       table: this.tables.rooms,
       id,
       data: { hide },
-    }) as Promise<Room>;
+    })
   }
   //#endregion hideRoomById
 
   //#region addLikeOrDislikeRoomById
-  private Dislike(id: string): Promise<Room> {
+  private Dislike(id: string): Promise<boolean> {
     const value = this.IncreementData('Dislike', 1);
-    return this.UpdateById({ table: this.tables.rooms, id, data: value }) as Promise<
-      Room
-    >;
+    return this.UpdateById({ table: this.tables.rooms, id, data: value })
   }
 
-  private Like(id: string): Promise<Room> {
+  private Like(id: string): Promise<boolean> {
     const value = this.IncreementData('Like', 1);
-    return this.UpdateById({ table: this.tables.rooms, id, data: value }) as Promise<
-      Room
-    >;
+    return this.UpdateById({ table: this.tables.rooms, id, data: value })
   }
 
-  AddLikeOrDislikeRoomById(id: string, like: boolean): Promise<Room> {
+  AddLikeOrDislikeRoomById(id: string, like: boolean): Promise<boolean> {
     if (like) return this.Like(id);
     return this.Dislike(id);
   }
@@ -140,10 +135,8 @@ class DAL extends MongoDB {
 
   //#region upDateRoomById
 
-  UpDateRoomById(id: string, data: object): Promise<Room> {
-    return this.UpdateById({ table: this.tables.rooms, id, data }) as Promise<
-      Room
-    >;
+  UpDateRoomById(id: string, data: object): Promise<boolean> {
+    return this.UpdateById({ table: this.tables.rooms, id, data })
   }
 
   //#endregion upDateRoomById
@@ -193,11 +186,9 @@ class DAL extends MongoDB {
 
   //#region updateRankById
 
-  UpdateRankById(id: string, rank: string): Promise<Room> {
+  UpdateRankById(id: string, rank: string): Promise<boolean> {
     const data = { rank };
-    return this.UpdateById({ table: this.tables.rooms, id, data }) as Promise<
-      Room
-    >;
+    return this.UpdateById({ table: this.tables.rooms, id, data })
   }
 
   //#endregion updateRankById

@@ -18,7 +18,6 @@ export class ServerClass implements ServerI {
     this.satan = new LandAgent(this.db);
   }
   async Login(data: any, context: any) {
-    console.log(data)
     return await this.db.SearchUserByEmailAndPasswd(data.email, data.password)
     throw new Error('Method not implemented.');
   }

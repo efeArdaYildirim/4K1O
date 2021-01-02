@@ -13,7 +13,6 @@ app.post('/login', async (req, res) => {
     email: 'efeardayildirim@gmail.com',
     password: '123'
   }, null)
-  console.log(us)
   res.send(us)
   return
 })
@@ -25,7 +24,6 @@ app.post('/logup', async (req, res) => {
       password: '123'
     }
   })
-  console.log(us)
 
   res.send(us)
   return

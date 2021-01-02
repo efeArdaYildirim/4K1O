@@ -1,6 +1,6 @@
-type Room = JSON &
+type Room =
   Object & {
-    id: string;
+    _id: string;
     title: string;
     explain: string;
     owner: string;
