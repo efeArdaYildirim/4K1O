@@ -16,7 +16,7 @@ type optStr = "<" | "<=" | "==" | ">" | ">=";
 type QueryStringObj = {
   colonOfTable: string;
   query: optStr;
-  mustBeData: string | number;
+  mustBeData: string | number | any;
 };
 
 type QueryArr = {

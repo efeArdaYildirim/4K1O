@@ -66,7 +66,7 @@ export class UserClass {
   //#endregion delMe
 
   //#region updateMe
-  UpdateMeFromUser(data: User | any): Promise<User> {
+  UpdateMeFromUser(data: User | any): Promise<boolean> {
     this.UserDartaValidte(data);
     return this.GetMeFromUser().then((me) => {
       if (me.isLandAgent) {
@@ -97,7 +97,7 @@ export class UserClass {
   //#endregion roomDelToCart
 
   //#region rankRoom
-  RankRoomFromUser(roomId: string, like: boolean): Promise<Room> {
+  RankRoomFromUser(roomId: string, like: boolean): Promise<boolean> {
     return this.db.AddLikeOrDislikeRoomById(roomId, like);
   }
   //#endregion rankRoom
