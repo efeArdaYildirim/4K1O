@@ -88,17 +88,17 @@ export abstract class MongoDB implements DB {
     }
   }
 
-  async WriteADataToDB({ table, data, id }: WriteADataParams): Promise<boolean> {
+  async WriteADataToDB({ table, data, id }: WriteADataParams): Promise<[boolean, string]> {
     try {
       await this.openConnection()
       const collection = this.database.collection(table)
       const q: any = {}
       if (id) q['_id'] = id
-      const { result } = await collection.insertOne({
+      const { result, insertedId } = await collection.insertOne({
         ...q, ...data, createdTime: new Date().toISOString()
 
       })
-      return result.ok === 1
+      return [result.ok === 1, insertedId.toString()]
     } finally {
       await this.close()
     }

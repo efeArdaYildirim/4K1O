@@ -20,7 +20,7 @@ interface DB {
     queryArr,
     returnDBQuery,
   }: FilterFuncParams): Promise<Object[]>;
-  WriteADataToDB({ table, data, id }: WriteADataParams): Promise<Boolean>;
+  WriteADataToDB({ table, data, id }: WriteADataParams): Promise<[Boolean, string]>;
   DelById({ table, id }: DelByIdParams): Promise<boolean | Error>;
   UpdateById({ table, id, data }: UpdateByIdParams): Promise<Object | Error>;
 

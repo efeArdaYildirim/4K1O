@@ -27,7 +27,7 @@ class DAL extends MongoDB {
   //#endregion getUserById
 
   //#region createUser
-  CreatUserToDB({ data, id }: any): Promise<boolean> {
+  CreatUserToDB({ data, id }: any): Promise<[boolean, string]> {
     return this.WriteADataToDB({ table: this.tables.users, data, id });
   }
   //#endregion createUser
@@ -99,7 +99,7 @@ class DAL extends MongoDB {
   //#endregion getRoomById
 
   //#region createRoom
-  CreateRoomToDB(data: Room): Promise<boolean> {
+  CreateRoomToDB(data: Room): Promise<[boolean, string]> {
     return this.WriteADataToDB({ table: this.tables.rooms, data });
   }
   //#endregion createRoom
