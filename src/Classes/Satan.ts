@@ -48,12 +48,12 @@ export class LandAgent extends UserClass {
         this.isItMyRoom(room);
         return this.db.DelRoomById(roomId);
       })
-      .catch((err) => {
+      .catch((err: any) => {
         throw err;
       });
   }
 
-  UpdateMyRoom(roomId: string, updateRoomData: Room): Promise<Room> {
+  UpdateMyRoom(roomId: string, updateRoomData: Room): Promise<boolean> {
     this.RoomDataValidator(updateRoomData);
     new Validator(updateRoomData).ItIsshouldNotToBeThere(["owner"]);
     return this.db.GetRoomById(roomId).then((room: Room) => {

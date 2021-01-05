@@ -1,12 +1,13 @@
+import { AnonimBaisic } from '../Abstract/AnonimBasic';
 import { AnonimFirebase } from "../Abstract/AnonimFirebase";
-import { QueryStringObj } from "../tipitipler/Extralar";
+import { QueryArr, QueryStringObj } from "../tipitipler/Extralar";
 import { SortQuery } from "../tipitipler/FireBaseStoreTypes";
 import { Room, Rooms } from "../tipitipler/Room";
 import { User } from "../tipitipler/User";
 import { DAL } from "./DAL";
 import { Validator } from "./Validator";
 
-export class Anonim extends AnonimFirebase {
+export class Anonim extends AnonimBaisic {
   db: DAL;
   constructor(dal: DAL) {
     super(dal);
@@ -15,9 +16,9 @@ export class Anonim extends AnonimFirebase {
 
   private RoomSearchQueryValidator(queryArr: QueryStringObj[]) {
     new Validator(queryArr)
-      .ItIsshouldToBeThere(["collOfTable", "query", "mustBeData"])
-      .MaxLength("collOfTable", 64)
-      .MinLength("collOfTable", 2)
+      .ItIsshouldToBeThere(["colonOfTable", "query", "mustBeData"])
+      .MaxLength("colonOfTable", 64)
+      .MinLength("colonOfTable", 2)
       .MaxLength("query", 2)
       .MinLength("query", 1)
       .MinLength("mustBeData", 2)
@@ -31,12 +32,13 @@ export class Anonim extends AnonimFirebase {
 
   SearchRoom(
     sort: SortQuery[],
-    queryArr: QueryStringObj[],
+    queryArr: QueryArr,
     city?: string,
     index: number = 0,
     limit: number = 50
   ): Promise<Rooms> {
-    this.RoomSearchQueryValidator(queryArr);
+    this.RoomSearchQueryValidator(queryArr.and);
+    this.RoomSearchQueryValidator(queryArr.or);
     return this.db
       .ListRoomByRankORCityFromDB({ queryArr, sort, limit, index, city })
       .then((rooms: Rooms) => {

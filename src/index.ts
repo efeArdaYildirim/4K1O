@@ -1,36 +1,34 @@
-import { firestore, initializeApp, credential } from "firebase-admin";
-import { https } from "firebase-functions";
 import { ServerClass } from "./Classes/ServerClass";
+import express = require('express');
+import { json } from 'body-parser'
 
-const serviceAccount = require("../key.json");
+const app = express();
 
-initializeApp({
-  //credential: credential.cert(serviceAccount),
-});
+const sv = new ServerClass('4k1o');
 
-const server = new ServerClass(firestore());
 
-export default {
-  login: https.onCall((data, context) => server.Login(data, context)),
-  logup: https.onCall((data, context) => server.Logup({ data, context })),
-  roomList: https.onCall((data, context) => server.RoomList(data, context)),
-  roomSearch: https.onCall((data, context) => server.RoomSearch(data, context)),
-  roomLook: https.onCall((data, context) => server.RoomLook(data, context)),
-  aEaddRoom: https.onCall((data, context) => server.AddRoom(data, context)),
-  aEgetMyRoom: https.onCall((data, context) =>
-    server.GetMyRooms(data, context)
-  ),
-  aESdelRoom: https.onCall((data, context) => server.DelRoom(data, context)),
-  aEsupdateRoom: https.onCall((data, context) =>
-    server.UpdateRoom(data, context)
-  ),
-  aUdeleteProfile: https.onCall((data, context) =>
-    server.DeleteMe(data, context)
-  ),
-  aUupdateProfile: https.onCall((data, context) =>
-    server.UpdateMe(data, context)
-  ),
-  aUaddCard: https.onCall((data, context) => server.CardJobs(data, context)),
-  aUrank: https.onCall((data, context) => server.Rank(data, context)),
-  aUdelCard: https.onCall((data, context) => server.CardJobs(data, context)),
-};
+
+app.post('/login', async (req, res) => {
+  const us = await sv.Login({
+    email: 'efeardayildirim@gmail.com',
+    password: '123'
+  }, null)
+  res.send(us)
+  return
+})
+
+app.post('/logup', async (req, res) => {
+  const us = await sv.Logup({
+    data: {
+      email: 'efeardayildirim@gmail.com',
+      password: '123'
+    }
+  })
+
+  res.send(us)
+  return
+})
+
+app.listen(3000, () => {
+  console.log('yasiyor')
+})

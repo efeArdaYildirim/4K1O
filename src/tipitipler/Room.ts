@@ -1,7 +1,6 @@
-type Room = JSON &
+type Room =
   Object & {
-    id: string;
-
+    _id: string;
     title: string;
     explain: string;
     owner: string;
@@ -13,14 +12,16 @@ type Room = JSON &
     dislike: number;
     m2: number;
     location: {
-      country: string | any;
+      // country: string | any;
       city: string | any;
-      neighborhood: string | any;
-      street: string | any;
       municipality: string | any;
+      neighborhood: string | any;
+      /*
+      street: string | any;
       zipCode: string | any;
       No: number;
-      door: number;
+      door: number;*/
+      level: number;
       mapsLink: string;
       title: string;
     };

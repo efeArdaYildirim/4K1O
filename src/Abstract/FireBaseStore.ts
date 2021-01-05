@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { firestore } from "firebase-admin";
 import * as functions from "firebase-functions";
 import {
@@ -115,7 +116,7 @@ abstract class FireBaseStore implements DB {
   }: FilterFuncParams): Promise<object[]> {
     const result = this.db.collection(table);
     queryArr.forEach((query) =>
-      result.where(query.collOfTable, query.query, query.mustBeData)
+      result.where(query.colonOfTable, query.query, query.mustBeData)
     );
     if (limit) this.ResultLimit(result, index, limit);
 

@@ -14,13 +14,18 @@ type JsonIterator<T> = {
 type optStr = "<" | "<=" | "==" | ">" | ">=";
 
 type QueryStringObj = {
-  collOfTable: string;
+  colonOfTable: string;
   query: optStr;
-  mustBeData: string;
+  mustBeData: string | number | any;
 };
 
+type QueryArr = {
+  and?: QueryStringObj[],
+  or?: QueryStringObj[]
+}
+
 type ListRoomsQueryParams = {
-  queryArr: QueryStringObj[];
+  queryArr: QueryArr;
   index: number;
   sort: SortQuery[];
   limit: number;
@@ -35,4 +40,5 @@ export {
   QueryStringObj,
   optStr,
   ListRoomsQueryParams,
+  QueryArr
 };

@@ -7,7 +7,7 @@ import {
   createTransport,
   getTestMessageUrl,
 } from "nodemailer";
-const { active, connection } = require("../../smtpConfig.json");
+// const { active, connection } = require("../../smtpConfig.json");
 config();
 export class App {
   db: DAL;
@@ -15,23 +15,23 @@ export class App {
   constructor(dal: DAL) {
     this.db = dal;
     this.transporter;
-    this.SmtpConnection()
-      .then((res) => res)
-      .catch((err) => err);
+    // this.SmtpConnection()
+    //   .then((res) => res)
+    //   .catch((err) => err);
   }
+  /*
+    /**
+     * @private
 
-  /**
-   * @private
-   */
-  async SmtpConnection(): Promise<void> {
-    if (active) {
-      this.transporter = createTransport(connection);
-    } else {
-      this.transporter = await createTestAccount();
+    async SmtpConnection(): Promise<void> {
+      if (active) {
+        this.transporter = createTransport(connection);
+      } else {
+        this.transporter = await createTestAccount();
+      }
+      return;
     }
-    return;
-  }
-
+*/
   private Rankalgorithm({ like, dislike }: any): number {
     return like - dislike;
   }
@@ -51,6 +51,8 @@ export class App {
     }
   }
 
+  /*
+
   SendMailToReciver(data: PayloadOfEMail) {
     this.transporter
       .sendMail({ ...data, from: "info@4k1o.com" })
@@ -69,7 +71,7 @@ export class App {
 
     return;
   }
-
+*/
   TurkisIdCheck(id: any): void {
     return;
   }
