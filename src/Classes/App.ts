@@ -7,6 +7,8 @@ import {
   createTransport,
   getTestMessageUrl,
 } from "nodemailer";
+import { createClient } from "soap";
+
 // const { active, connection } = require("../../smtpConfig.json");
 config();
 export class App {
@@ -72,7 +74,26 @@ export class App {
     return;
   }
 */
-  TurkisIdCheck(id: any): void {
-    return;
+  TurkisIdCheck({ id, name, sirname, YearOfBirdth: yearOfBirdth }): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      const url = "https://tckimlik.nvi.gov.tr/service/kpspublic.asmx?WSDL";
+      let data = {
+        TCKimlikNo: id,
+        Ad: name,
+        Soyad: sirname,
+        DogumYili: yearOfBirdth,
+      };
+
+      createClient(url, (err, client) => {
+        client.TCKimlikNoDogrula(data, (err, result) => {
+          if (result.TCKimlikNoDogrulaResult) {
+            resolve()
+          } else {
+            reject('hatali bilgi')
+          }
+        });
+      });
+
+    });
   }
 }

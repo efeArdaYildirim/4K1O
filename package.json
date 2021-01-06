@@ -19,7 +19,8 @@
     "firebase-admin": "^8.10.0",
     "firebase-functions": "^3.6.1",
     "mongodb": "^3.6.3",
-    "nodemailer": "^6.4.11"
+    "nodemailer": "^6.4.11",
+    "soap": "^0.35.0"
   },
   "devDependencies": {
     "@types/mongodb": "^3.5.27",
