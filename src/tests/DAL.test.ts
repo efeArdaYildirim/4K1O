@@ -28,7 +28,7 @@ test('create user To db', async () => {
   const user = { ...data.users[0] }
   delete user._id
   const result = await db.CreatUserToDB({ data: user, id: data.users[0]._id })
-  expect(result).toBeTruthy()
+  expect(result.ok).toBeTruthy()
 })
 
 test("search user by email and passwd", async () => {
@@ -38,7 +38,7 @@ test("search user by email and passwd", async () => {
 
 test("add room to card", async () => {
   const result = await db.AddRoomToCardWriteToDB(data.users[0]._id, data.rooms[0]._id)
-  expect(result).toBeTruthy()
+  expect(result.ok).toBeTruthy()
 })
 
 

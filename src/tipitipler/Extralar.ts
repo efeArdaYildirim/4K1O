@@ -32,6 +32,11 @@ type ListRoomsQueryParams = {
   city?: string;
 };
 
+type WriteDataToDBReturn = {
+  ok: boolean;
+  id: string;
+}
+
 // degisiklik
 
 export {
@@ -40,5 +45,6 @@ export {
   QueryStringObj,
   optStr,
   ListRoomsQueryParams,
-  QueryArr
+  QueryArr,
+  WriteDataToDBReturn
 };

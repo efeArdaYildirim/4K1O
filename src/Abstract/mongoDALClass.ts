@@ -23,6 +23,7 @@ export abstract class MongoDB implements DB {
   }
 
   async OpenConnection(): Promise<void> {
+    if (this.db.isConnected) return;
     this.db = new MongoClient(this.connection, { poolSize: 20, useUnifiedTopology: true })
     await this.db.connect();
     this.database = this.db.db(this.dbName)
@@ -118,7 +119,7 @@ export abstract class MongoDB implements DB {
     }
   }
 
-  async WriteADataToDB({ table, data, id }: WriteADataParams): Promise<[boolean, string]> {
+  async WriteADataToDB({ table, data, id }: WriteADataParams) {
     try {
       await this.OpenConnection()
       const collection = this.database.collection(table)
@@ -128,7 +129,7 @@ export abstract class MongoDB implements DB {
       const { result, insertedId } = await collection.insertOne({
         ...q, ...data,
       })
-      return [result.ok === 1, insertedId.toString()]
+      return { ok: result.ok === 1, id: insertedId.toString() }
     } finally {
       await this.Close()
     }
